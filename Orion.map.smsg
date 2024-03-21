@@ -1,0 +1,9 @@
+Info (10281): Verilog HDL Declaration information at sdr_send.v(32): object "wideband" differs only in case from object "WIDEBAND" in the same scope File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Ethernet/sdr_send.v Line: 32
+Warning (10273): Verilog HDL warning at eeprom.v(59): extended using "x" or "z" File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Ethernet/eeprom.v Line: 59
+Warning (10268): Verilog HDL information at dhcp.v(91): always construct contains both blocking and non-blocking assignments File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Ethernet/dhcp.v Line: 91
+Warning (10268): Verilog HDL information at profile.v(59): always construct contains both blocking and non-blocking assignments File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/profile.v Line: 59
+Info (10281): Verilog HDL Declaration information at Orion.v(1040): object "Mic_data" differs only in case from object "mic_data" in the same scope File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.v Line: 1040
+Info (10281): Verilog HDL Declaration information at Orion.v(1112): object "q" differs only in case from object "Q" in the same scope File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.v Line: 1112
+Info (10281): Verilog HDL Declaration information at Orion.v(587): object "OSC_10MHZ" differs only in case from object "osc_10MHZ" in the same scope File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.v Line: 587
+Info (10281): Verilog HDL Declaration information at Apollo.v(72): object "reset" differs only in case from object "RESET" in the same scope File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Apollo.v Line: 72
+Info (10281): Verilog HDL Declaration information at SPI.v(102): object "spi_clock" differs only in case from object "SPI_clock" in the same scope File: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/SPI.v Line: 102

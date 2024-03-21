@@ -1,0 +1,725 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 100C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.728
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'PHY_RX_CLOCK'
+Slack : 0.997
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'LTC2208_122MHz'
+Slack : 1.760
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup '_122MHz'
+Slack : 2.355
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 2.416
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'tx_clock'
+Slack : 2.416
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 3.934
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'PHY_CLK125'
+Slack : 6.595
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 13.238
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'data_clk2'
+Slack : 14.832
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'CLK_25MHZ'
+Slack : 36.821
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'data_clk'
+Slack : 55.871
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 72.694
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 74.041
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 74.140
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 143.761
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.324
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.357
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'tx_clock'
+Slack : 0.357
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.359
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.407
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 0.407
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.407
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.408
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'CLK_25MHZ'
+Slack : 0.412
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PHY_CLK125'
+Slack : 0.412
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'LTC2208_122MHz'
+Slack : 0.684
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PHY_RX_CLOCK'
+Slack : 1.246
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 1.643
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold '_122MHz'
+Slack : 6.021
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'data_clk'
+Slack : 13.659
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Hold 'data_clk2'
+Slack : 15.617
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Recovery 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 2.873
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Recovery 'PHY_RX_CLOCK'
+Slack : 3.694
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Recovery 'LTC2208_122MHz'
+Slack : 7.789
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Recovery 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 35.917
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'PHY_RX_CLOCK'
+Slack : 2.831
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'LTC2208_122MHz'
+Slack : 2.883
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.044
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Removal 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 41.866
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PHY_CLK125'
+Slack : 2.839
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PHY_RX_CLOCK'
+Slack : 3.465
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'LTC2208_122MHz'
+Slack : 3.487
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.694
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'tx_clock'
+Slack : 3.694
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.762
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width '_122MHz'
+Slack : 3.874
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'LTC2208_122MHz_2'
+Slack : 4.138
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 15.971
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'CLK_25MHZ'
+Slack : 19.692
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 39.696
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 40.395
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'CMCLK'
+Slack : 77.170
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'OSC_10MHZ'
+Slack : 96.000
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 162.378
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 199.706
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'CBCLK'
+Slack : 321.310
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 10416.338
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'CLRCIN'
+Slack : 20829.070
+TNS   : 0.000
+
+Type  : Slow 1200mV 100C Model Minimum Pulse Width 'CLRCOUT'
+Slack : 20829.070
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.942
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PHY_RX_CLOCK'
+Slack : 1.982
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'LTC2208_122MHz'
+Slack : 2.227
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup '_122MHz'
+Slack : 2.927
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.694
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 4.291
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'tx_clock'
+Slack : 4.951
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PHY_CLK125'
+Slack : 6.758
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 14.930
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'data_clk2'
+Slack : 15.795
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'CLK_25MHZ'
+Slack : 37.327
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'data_clk'
+Slack : 56.388
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 73.637
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 74.853
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 74.932
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 145.887
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.320
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.320
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'tx_clock'
+Slack : 0.320
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.322
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.335
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 0.335
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.335
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.335
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PHY_CLK125'
+Slack : 0.349
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'CLK_25MHZ'
+Slack : 0.350
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'LTC2208_122MHz'
+Slack : 1.076
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PHY_RX_CLOCK'
+Slack : 1.229
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 1.431
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold '_122MHz'
+Slack : 5.572
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'data_clk'
+Slack : 13.154
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Hold 'data_clk2'
+Slack : 14.918
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Recovery 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.546
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Recovery 'PHY_RX_CLOCK'
+Slack : 4.417
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Recovery 'LTC2208_122MHz'
+Slack : 8.953
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Recovery 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 36.417
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'PHY_RX_CLOCK'
+Slack : 2.612
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 2.646
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'LTC2208_122MHz'
+Slack : 2.664
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Removal 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 41.588
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PHY_CLK125'
+Slack : 2.865
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PHY_RX_CLOCK'
+Slack : 3.487
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'LTC2208_122MHz'
+Slack : 3.509
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.674
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'tx_clock'
+Slack : 3.674
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.743
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width '_122MHz'
+Slack : 3.878
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'LTC2208_122MHz_2'
+Slack : 4.138
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 15.977
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'CLK_25MHZ'
+Slack : 19.700
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 39.673
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 40.393
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'CMCLK'
+Slack : 77.170
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'OSC_10MHZ'
+Slack : 96.000
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 162.391
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 199.705
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'CBCLK'
+Slack : 321.310
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 10416.342
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'CLRCIN'
+Slack : 20829.070
+TNS   : 0.000
+
+Type  : Slow 1200mV -40C Model Minimum Pulse Width 'CLRCOUT'
+Slack : 20829.070
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 1.819
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'LTC2208_122MHz'
+Slack : 3.805
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup '_122MHz'
+Slack : 4.765
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PHY_RX_CLOCK'
+Slack : 5.108
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 5.669
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 6.028
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PHY_CLK125'
+Slack : 7.341
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'tx_clock'
+Slack : 12.502
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 17.399
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'data_clk2'
+Slack : 18.507
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'CLK_25MHZ'
+Slack : 38.523
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'data_clk'
+Slack : 58.552
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 77.036
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 77.594
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 77.649
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Setup 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 151.717
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.117
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.141
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 0.141
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'tx_clock'
+Slack : 0.141
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.173
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.174
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 0.174
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 0.174
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'CLK_25MHZ'
+Slack : 0.177
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PHY_CLK125'
+Slack : 0.178
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PHY_RX_CLOCK'
+Slack : 0.592
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 0.721
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'LTC2208_122MHz'
+Slack : 0.726
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold '_122MHz'
+Slack : 4.345
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'data_clk'
+Slack : 11.839
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Hold 'data_clk2'
+Slack : 12.730
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Recovery 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 5.390
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Recovery 'PHY_RX_CLOCK'
+Slack : 6.390
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Recovery 'LTC2208_122MHz'
+Slack : 12.669
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Recovery 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 37.808
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 1.408
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'LTC2208_122MHz'
+Slack : 1.827
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'PHY_RX_CLOCK'
+Slack : 1.839
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Removal 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 40.830
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PHY_CLK125'
+Slack : 2.433
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PHY_RX_CLOCK'
+Slack : 3.191
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'LTC2208_122MHz'
+Slack : 3.255
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width '_122MHz'
+Slack : 3.487
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.747
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'tx_clock'
+Slack : 3.747
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 3.848
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'LTC2208_122MHz_2'
+Slack : 4.138
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]'
+Slack : 16.052
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'CLK_25MHZ'
+Slack : 19.265
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 39.748
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]'
+Slack : 40.470
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'CMCLK'
+Slack : 77.380
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'OSC_10MHZ'
+Slack : 96.000
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]'
+Slack : 162.506
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 199.779
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'CBCLK'
+Slack : 321.520
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]'
+Slack : 10416.389
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'CLRCIN'
+Slack : 20829.280
+TNS   : 0.000
+
+Type  : Fast 1200mV -40C Model Minimum Pulse Width 'CLRCOUT'
+Slack : 20829.280
+TNS   : 0.000
+
+------------------------------------------------------------
