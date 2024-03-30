@@ -1,6 +1,6 @@
 Assembler report for Orion
-Mon Feb 21 18:32:57 2022
-Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
+Thu Mar 28 17:41:26 2024
+Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
 ---------------------
@@ -10,9 +10,9 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
   2. Assembler Summary
   3. Assembler Settings
   4. Assembler Generated Files
-  5. Assembler Device Options: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.sof
-  6. Assembler Device Options: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.pof
-  7. Assembler Device Options: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.rbf
+  5. Assembler Device Options: Orion.sof
+  6. Assembler Device Options: Orion.pof
+  7. Assembler Device Options: Orion.rbf
   8. Assembler Messages
 
 
@@ -20,7 +20,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2019  Intel Corporation. All rights reserved.
+Copyright (C) 2020  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
@@ -40,7 +40,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Mon Feb 21 18:32:57 2022 ;
+; Assembler Status      ; Successful - Thu Mar 28 17:41:26 2024 ;
 ; Revision Name         ; Orion                                 ;
 ; Top-level Entity Name ; Orion                                 ;
 ; Family                ; Cyclone IV E                          ;
@@ -60,41 +60,41 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------+
 ; File Name                                                   ;
 +-------------------------------------------------------------+
-; C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.sof ;
-; C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.pof ;
-; C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.rbf ;
+; /home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Orion.sof ;
+; /home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Orion.pof ;
+; /home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Orion.rbf ;
 +-------------------------------------------------------------+
 
 
-+---------------------------------------------------------------------------------------+
-; Assembler Device Options: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.sof ;
-+----------------+----------------------------------------------------------------------+
-; Option         ; Setting                                                              ;
-+----------------+----------------------------------------------------------------------+
-; JTAG usercode  ; 0x03462422                                                           ;
-; Checksum       ; 0x03462422                                                           ;
-+----------------+----------------------------------------------------------------------+
++-------------------------------------+
+; Assembler Device Options: Orion.sof ;
++----------------+--------------------+
+; Option         ; Setting            ;
++----------------+--------------------+
+; JTAG usercode  ; 0x035851E8         ;
+; Checksum       ; 0x035851E8         ;
++----------------+--------------------+
 
 
-+---------------------------------------------------------------------------------------+
-; Assembler Device Options: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.pof ;
-+--------------------+------------------------------------------------------------------+
-; Option             ; Setting                                                          ;
-+--------------------+------------------------------------------------------------------+
-; JTAG usercode      ; 0x00000000                                                       ;
-; Checksum           ; 0xEBEE36F9                                                       ;
-; Compression Ratio  ; 2                                                                ;
-+--------------------+------------------------------------------------------------------+
++-------------------------------------+
+; Assembler Device Options: Orion.pof ;
++--------------------+----------------+
+; Option             ; Setting        ;
++--------------------+----------------+
+; JTAG usercode      ; 0x00000000     ;
+; Checksum           ; 0xEBEA05D8     ;
+; Compression Ratio  ; 2              ;
++--------------------+----------------+
 
 
-+---------------------------------------------------------------------------------------+
-; Assembler Device Options: C:/Users/Yury/Desktop/Anvilina_TEST_2v2.1.19_2022/Orion.rbf ;
-+---------------------+-----------------------------------------------------------------+
-; Option              ; Setting                                                         ;
-+---------------------+-----------------------------------------------------------------+
-; Raw Binary File     ;                                                                 ;
-;  Compression Ratio  ; 2                                                               ;
-+---------------------+-----------------------------------------------------------------+
++-------------------------------------+
+; Assembler Device Options: Orion.rbf ;
++---------------------+---------------+
+; Option              ; Setting       ;
++---------------------+---------------+
+; Raw Binary File     ;               ;
+;  Compression Ratio  ; 2             ;
++---------------------+---------------+
 
 
 +--------------------+
@@ -102,15 +102,15 @@ https://fpgasoftware.intel.com/eula.
 +--------------------+
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
-    Info: Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
-    Info: Processing started: Mon Feb 21 18:32:51 2022
+    Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+    Info: Processing started: Thu Mar 28 17:41:15 2024
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off Orion -c Orion
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 5027 megabytes
-    Info: Processing ended: Mon Feb 21 18:32:57 2022
-    Info: Elapsed time: 00:00:06
-    Info: Total CPU time (on all processors): 00:00:07
+    Info: Peak virtual memory: 696 megabytes
+    Info: Processing ended: Thu Mar 28 17:41:26 2024
+    Info: Elapsed time: 00:00:11
+    Info: Total CPU time (on all processors): 00:00:11
 
 

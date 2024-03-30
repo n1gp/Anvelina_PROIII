@@ -16,9 +16,9 @@ create_clock -name {LTC2208_122MHz_2} -period 8.138 -waveform { 0.000 4.069 } [g
 create_clock -name {OSC_10MHZ} -period 100.000 -waveform { 0.000 50.000 } [get_ports {OSC_10MHZ}]
 create_clock -name {PHY_CLK125} -period 8.000 -waveform { 0.000 4.000 } [get_ports {PHY_CLK125}]
 create_clock -name {PHY_RX_CLOCK} -period 8.000 -waveform { 2.000 6.000 } [get_ports {PHY_RX_CLOCK}]
-create_clock -name {CLK_25MHZ} -period 40.000 -waveform { 0.000 20.000 } [get_ports {CLK_25MHZ}]
+create_clock -name {CLOCK_25MHZ} -period 40.000 -waveform { 0.000 20.000 } [get_ports {CLOCK_25MHZ}]
 
-set_clock_groups -exclusive -group {CLK_25MHZ}
+set_clock_groups -exclusive -group {CLOCK_25MHZ}
 #set_clock_groups -exclusive -group {PHY_CLK125}
 set_clock_groups -exclusive -group {PHY_RX_CLOCK}
 
@@ -38,8 +38,8 @@ set CMCLK  PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]
 set CBCLK  PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]
 set CLRCLK PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]
 
-set clock_12_5MHz network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]
-set clock_2_5MHz  network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]
+set clock_12_5MHz network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]
+set clock_2_5MHz  network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]
 
 #**************************************************************
 # Create Generated Clock (internal to the FPGA)
@@ -48,14 +48,14 @@ set clock_2_5MHz  network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto
 # clock needs to be attached to the pin and a false path set to it
 
 #create genenerated clock for internal PHY Tx data clock.
-create_generated_clock -source [get_pins {network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]}] \
-  -name tx_clock -duty_cycle 50.00 [get_pins {network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]}] -add
+create_generated_clock -source [get_pins {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]}] \
+  -name tx_clock -duty_cycle 50.00 [get_pins {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]}] -add
 
 set_clock_groups -exclusive -group {tx_clock}
 
 #create generated clock for PLL transmit clock output with 90 phase shift
-create_generated_clock -source [get_pins {network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]}] \
-  -name PHY_TX_CLOCK -phase 135.00 -duty_cycle 50.00 [get_pins {network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1]}] -add
+create_generated_clock -source [get_pins {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]}] \
+  -name PHY_TX_CLOCK -phase 90.00 -duty_cycle 50.00 [get_pins {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1]}] -add
 
 set_clock_groups -exclusive -group {PHY_TX_CLOCK}
 
@@ -76,10 +76,10 @@ create_generated_clock -name CLRCOUT -source $CLRCLK [get_ports CLRCOUT]
 #**************************************************************
 set_clock_groups -asynchronous  -group { \
 					PHY_CLK125 \
-					network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] \
-					network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1] \
-					network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2] \
-					network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3] \
+					network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] \
+					network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1] \
+					network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2] \
+					network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3] \
 					tx_clock \
 					PHY_TX_CLOCK \
 				       } \
@@ -111,7 +111,7 @@ set_clock_groups -asynchronous  -group { \
 # If setup and hold delays are equal then only need to specify once without max or min 
 
 #12.5MHz clock for Config EEPROM  +/- 10nS
-set_output_delay  10 -clock $clock_12_5MHz {ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_DCLK ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_SCE ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_SDO }
+set_output_delay  10 -clock $clock_12_5MHz {ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_DCLK ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_SCE ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_SDO }
 
 #122.88MHz clock for Tx DAC 
 set_output_delay 0.8 -clock _122MHz {DACD[*]} -add_delay
@@ -161,7 +161,7 @@ set_output_delay  10 -clock $clock_2_5MHz {PHY_MDIO} -add_delay
 # If setup and hold delays are equal then only need to specify once without max or min 
 
 #12.5MHz clock for Config EEPROM  +/- 10nS setup and hold
-set_input_delay 10  -clock  $clock_12_5MHz { ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_DATA0 }
+set_input_delay 10  -clock  $clock_12_5MHz { ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_DATA0 }
 
 # data from LTC2208 +/- 2nS setup and hold 
 set_input_delay -add_delay  -clock [get_clocks {virt_122MHz}]  2.000 [get_ports {INA[*]}]
@@ -205,15 +205,15 @@ set_input_delay  10  -clock data_clk2 {ADCMISO} -add_delay
 
 set_max_delay -from LTC2208_122MHz -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 6
 set_max_delay -from LTC2208_122MHz -to LTC2208_122MHz 18
-#set_max_delay -from network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to tx_clock 20
-set_max_delay -from network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 21
+#set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to tx_clock 20
+set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 21
 set_max_delay -from tx_clock -to tx_clock 21
-#set_max_delay -from network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to PHY_TX_CLOCK 9
+#set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to PHY_TX_CLOCK 9
 #set_max_delay -from tx_clock -to PHY_TX_CLOCK 9
-set_max_delay -from PHY_RX_CLOCK -to PHY_RX_CLOCK 9
-#set_max_delay -from tx_clock -to network_inst|rgmii_send_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 20
+set_max_delay -from PHY_RX_CLOCK -to PHY_RX_CLOCK 10
+#set_max_delay -from tx_clock -to network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 20
 set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] -to _122MHz 8
-set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1] -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 3
+set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1] -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 4
 #set_max_delay -from LTC2208_122MHz -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 6
 
 #**************************************************************
@@ -249,14 +249,14 @@ set_false_path -from [get_clocks {LTC2208_122MHz}] -to [get_clocks {LTC2208_122M
 set_false_path -from [get_ports {PHY_RESET_N}]
 
 # Set false path to generated clocks that feed output pins
-set_false_path -to [get_ports {CMCLK CBCLK CLRCIN CLRCOUT ATTN_CLK* SSCK ADCCLK SPI_SCK PHY_MDC PHY_TX_CLOCK CLK_25MHZ}]
+set_false_path -to [get_ports {CMCLK CBCLK CLRCIN CLRCOUT ATTN_CLK* SSCK ADCCLK SPI_SCK PHY_MDC PHY_TX_CLOCK CLOCK_25MHZ}]
 
 # 'get_keepers' denotes either ports or registers
 # don't need fast paths to the LEDs and adhoc outputs so set false paths so Timing will be ignored
-set_false_path -to [get_keepers { Status_LED DEBUG_LED* DITH* FPGA_PTT  NCONFIG  RAND*  USEROUT* FPGA_PLL DAC_ALC DRIVER_PA_EN CTRL_TRSW IO1 TX_ATTEN* atu_ctrl}]
+set_false_path -to [get_keepers { Status_LED DEBUG_LED* DITH* FPGA_PTT  NCONFIG  RAND*  USEROUT* FPGA_PLL DAC_ALC DRIVER_PA_EN CTRL_TRSW IO1 atu_ctrl}]
 
 #don't need fast paths from the following inputs
-set_false_path -from [get_keepers  {ANT_TUNE IO2 IO4 IO5 IO6 IO8 KEY_DASH KEY_DOT OVERFLOW* PTT MODE2 TX_ATTEN_SELECT}]
+set_false_path -from [get_keepers  {ANT_TUNE IO2 IO4 IO5 IO6 IO8 KEY_DASH KEY_DOT OVERFLOW* PTT MODE2}]
 
 #these registers are set long before they are used
 set_false_path -from [get_registers {network:network_inst|eeprom:eeprom_inst|mac[*]}] -to [all_registers]

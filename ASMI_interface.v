@@ -77,7 +77,7 @@ case (state)
 		write <= 0;
 		erase_ACK <= 0;
 		erase_done <= 0;
-		address <= 24'h200000;			// set starting address to write to is top 1MB
+		address <= 24'h100000;			// set starting address to write to is top 1MB
 		byte_count <= 0;
 		page <= 0;
 		send_more <= 0;
@@ -102,7 +102,7 @@ case (state)
 		write_enable <= 0;
 		sector_erase <= 0;
 		if (busy) state <= 2;
-		else if (address != 24'h600000) begin 
+		else if (address != 24'h300000) begin 
 				address <= address + ((EPCS_flash) ? 24'h040000 : 24'h010000);
 				state <= 1;
 		end 

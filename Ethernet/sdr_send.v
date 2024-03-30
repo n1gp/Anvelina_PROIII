@@ -34,7 +34,7 @@ module sdr_send(
 	input [7:0] code_version,
 	input [7:0] beta_version,
 	input discovery, 
-	input [7:0]Rx_data[0:NR-1] /* ramstyle = "logic" */,			// Rx data to send to PHY
+	input [8:0]Rx_data[0:NR-1] /* ramstyle = "logic" */,			// Rx data to send to PHY
 	input sp_data_ready,
 	input [7:0] sp_fifo_rddata,
 	input udp_tx_enable,
@@ -46,15 +46,10 @@ module sdr_send(
 	input CC_data_ready,
 	input [7:0]CC_data[0:55], 			//[7:0]CC_data[0:56],
 	input [31:0] sequence_number,		// sequence number to send when programming and requesting more data.	
-	input [15:0]samples_per_frame[0:NR-1],	
-	input [15:0]tx_length[0:NR-1],		// length of the UDP packet, varies with number of sync or mux receivers.
+	//input [15:0]samples_per_frame[0:NR-1],	
+	//input [15:0]tx_length[0:NR-1],		// length of the UDP packet, varies with number of sync or mux receivers.
         input [15:0] checksum,
-	input [7:0] Wideband_packets_per_frame,
-	input [7:0] phaseval,
-	input reg [7:0] reg_rxtxc,
-	input reg [7:0] reg_rxtxd,
-	input reg [10:0] reg_rxtxclk,
-	input is_9031,
+	input [7:0] Wideband_packets_per_frame,  // 
 	
 	output reg udp_tx_request,
 	output [7:0] udp_tx_data,
@@ -71,10 +66,10 @@ module sdr_send(
 	output reg discovery_ACK			// set to indictate that a discovery reply has been received. 
 );
 
-parameter board_type,
-			 NR,
-			 master_clock,
-			 protocol_version;
+parameter	board_type,
+		NR,
+		master_clock,
+		protocol_version;
 
 localparam
     IDLE        = 10'd0,
@@ -94,7 +89,7 @@ localparam
 	
 	
 localparam 
-	HEADER_LENGTH	= 16'd30,		// number of bytes in response  udp header
+	HEADER_LENGTH  = 16'd24,					// number of bytes in response  udp header
 	PC_LENGTH	= 16'd4,		// number of bytes in sequence number
 	RES_H_BIT	= HEADER_LENGTH*8 -1,  	// response header bits
 	PC_H_BIT	= PC_LENGTH*8 -1,
@@ -114,6 +109,8 @@ reg [7:0] tx_data;
 reg [63:0] time_stamp = 0;
 reg [15:0] bits_per_sample = 16'd24;
 reg [15:0] samples_frame;
+reg [2:0] rx_count;
+reg realign;
 
 // response payload followed by 50 x 0x01
 reg [RES_H_BIT:0] response_tx_bits; // new protocol
@@ -129,7 +126,7 @@ reg send_response = 0;
 integer i;
 
 wire [7:0] number_Rx = NR;
-wire [31:0] clock_frequency = master_clock;
+//wire [31:0] clock_frequency = master_clock;
 
 //reg [25:0] epoch_min; // multiply by 60 to get epoch seconds
 //datetime datetime_inst(.epoch_min (epoch_min));
@@ -150,13 +147,13 @@ always @(posedge tx_clock)
 				mic_fifo_rdreq <= 1'b0;
 				udp_tx_length <= 16'd0;
 				fifo_rdreq[0] <= 1'b0;
-				fifo_rdreq[1] <= 1'b0;
-				fifo_rdreq[2] <= 1'b0;
-				fifo_rdreq[3] <= 1'b0;
-				fifo_rdreq[4] <= 1'b0;
-				fifo_rdreq[5] <= 1'b0;
-				fifo_rdreq[6] <= 1'b0;
-				fifo_rdreq[7] <= 1'b0;
+				if (NR > 1) fifo_rdreq[1] <= 1'b0;
+				if (NR > 2) fifo_rdreq[2] <= 1'b0;
+				if (NR > 3) fifo_rdreq[3] <= 1'b0;
+				if (NR > 4) fifo_rdreq[4] <= 1'b0;
+				if (NR > 5) fifo_rdreq[5] <= 1'b0;
+				if (NR > 6) fifo_rdreq[6] <= 1'b0;
+				if (NR > 7) fifo_rdreq[7] <= 1'b0;
 				if (!send_more)  send_more_ACK  <= 1'b0;		// clear ACK when sdr_receiver has seen our ACK
 				if (!erase_done) erase_done_ACK <= 1'b0;		// clear ACK when ASMI_interface has seen our ACK
 				if (!discovery)  discovery_ACK  <= 1'b0;		// clear ACK when sdr_receiver has seen our ACK
@@ -166,17 +163,17 @@ always @(posedge tx_clock)
 				if (discovery) begin
 					// sequence number set to zero for future use
 					response_tx_bits <= {32'd0, (8'd02 + {7'b0,run}), local_mac, board_type, protocol_version, code_version, 48'd0, number_Rx, 8'd1,
-						8'd0, beta_version, 8'd0, phaseval, reg_rxtxc, reg_rxtxd, {3'b0, reg_rxtxclk[9:5]}, {is_9031, 2'b0, reg_rxtxclk[4:0]}};
+						8'd0, beta_version};
 					state <= response;			// **** change HEADER_LENGTH when making changes here ****
 				end 
 				
 				else if (erase_done) begin
-					response_tx_bits <= {32'd0, 8'd03, local_mac, code_version, board_type, 136'd0}; // sequence number set to zero for future use
+					response_tx_bits <= {32'd0, 8'd03, local_mac, code_version, board_type, 88'd0}; 	// sequence number set to zero for future use
 					state <= response;
 				end 
 				
 				else if (send_more) begin
-					response_tx_bits <= {sequence_number, 8'd04, local_mac, code_version, board_type, checksum, 120'd0}; 
+					response_tx_bits <= {sequence_number, 8'd04, local_mac, code_version, board_type, checksum, 72'd0}; 
 					state <= response;
 				end 
 
@@ -198,10 +195,12 @@ always @(posedge tx_clock)
 					else begin
 						if (fifo_ready[port_index])
 						begin
-							udp_tx_length <= tx_length[port_index]; //PC_LENGTH + (samples_per_frame[k] * 16'd6) + 12;			
-							port_ID <= 8'd11 + port_index;		// set from_port to base + j i.e. 1035 + j
+							//udp_tx_length <= tx_length[port_index]; //PC_LENGTH + (samples_per_frame[k] * 16'd6) + 12;			
+							//udp_tx_length <= 16'd1444;
+							//port_ID <= 8'd11 + port_index;		// set from_port to base + j i.e. 1035 + j
+							//samples_frame <= 16'd238;
 							select <= port_index;
-							samples_frame <= samples_per_frame[port_index];
+							//samples_frame <= samples_per_frame[port_index];
 							state <= RX_SEND;
 						end
 						port_index <= port_index + 1'd1;
@@ -210,13 +209,13 @@ always @(posedge tx_clock)
 					
 				else  if (!run) begin 		// not running so reset all sequence numbers.
 					Rx_sequence_number[0] <= 32'd0;
-					Rx_sequence_number[1] <= 32'd0;
-					Rx_sequence_number[2] <= 32'd0;
-					Rx_sequence_number[3] <= 32'd0;
-					Rx_sequence_number[4] <= 32'd0;
-					Rx_sequence_number[5] <= 32'd0;
-					Rx_sequence_number[6] <= 32'd0;
-					Rx_sequence_number[7] <= 32'd0;
+					if (NR > 1) Rx_sequence_number[1] <= 32'd0;
+					if (NR > 2) Rx_sequence_number[2] <= 32'd0;
+					if (NR > 3) Rx_sequence_number[3] <= 32'd0;
+					if (NR > 4) Rx_sequence_number[4] <= 32'd0;
+					if (NR > 5) Rx_sequence_number[5] <= 32'd0;
+					if (NR > 6) Rx_sequence_number[6] <= 32'd0;
+					if (NR > 7) Rx_sequence_number[7] <= 32'd0;
    					mic_seq_number <= 32'd0;
 					CC_seq_number <= 32'd0;
 					spec_seq_number <= 32'd0;
@@ -285,9 +284,9 @@ always @(posedge tx_clock)
 			
 		WIDEBAND_2:
 			begin
-			  WB_ack <= 1'b0; 
-			  if (byte_no < udp_tx_length) begin    // spec_seq_number	
-				if (udp_tx_active) begin
+				WB_ack <= 1'b0; 
+				if (byte_no < udp_tx_length) begin    // spec_seq_number	
+					if (udp_tx_active) begin
 					case (byte_no)
 						16'd0: tx_data <= spec_seq_number[23:16];					
 						16'd1: begin
@@ -298,18 +297,21 @@ always @(posedge tx_clock)
 						udp_tx_length - 16'd3: sp_fifo_rdreq <= 1'b0;
 					endcase
 					
-				if (byte_no > 16'd2) tx_data <= sp_fifo_rddata;
-				byte_no <= byte_no + 16'd1;
-			  end 
-		   end
-			else  begin  // all data sent so increment sequence number and block count 
+					if (byte_no > 16'd2) tx_data <= sp_fifo_rddata;
+					byte_no <= byte_no + 16'd1;
+					end 
+				end
+				else  begin  // all data sent so increment sequence number and block count 
 					spec_seq_number <= spec_seq_number + 32'b1; 
 					state <= IDLE; 		// all data sent so return to start
-					end
-		end			
+				end
+			end			
 			
 		RX_SEND:
 			begin
+				udp_tx_length <= 16'd1444;
+				port_ID <= 8'd11 + select;		// set from_port to base + j i.e. 1035 + j
+				samples_frame <= 16'd238;
 				udp_tx_request <= 1'b1;
 				if (udp_tx_enable) begin
 					tx_data <= Rx_sequence_number[select][31:24];
@@ -338,18 +340,32 @@ always @(posedge tx_clock)
 						16'd13: begin
 								tx_data <= samples_frame[15:8];		// Add number of samples
 								fifo_rdreq[select] <= 1'b1;		// set fifo read true one clock before needed 
+								rx_count <= 3'd0;
+								realign <= 1'b0;
 							 end 							
 						16'd14: tx_data <= samples_frame[7:0];
-						udp_tx_length - 3: fifo_rdreq[select] <= 1'b0;		// set fifo read false one clock before needed 		   				 
+						udp_tx_length - 16'd3: fifo_rdreq[select] <= 1'b0;		// set fifo read false one clock before needed 		   				 
 					endcase
 				
-					if (byte_no > 16'd14) tx_data <=  Rx_data[select];
+					if (byte_no > 16'd14) begin
+						// skip some data in attempt to realign
+						if (Rx_data[select][8] == 1'b0 && rx_count == 3'd0) begin
+							fifo_rdreq[select] <= 1'b0;
+							realign <= 1'b1;
+						end
+						else if (realign && rx_count == 3'd4) begin
+							realign <= 1'b0;
+							fifo_rdreq[select] <= 1'b1;
+						end
+						tx_data <=  Rx_data[select][7:0];
+						rx_count <= rx_count < 3'd5 ? rx_count + 3'd1 : 3'd0;
+					end
 					byte_no <= byte_no + 16'd1;
 				end 
 			end
 			else begin
-				state <= IDLE; 		// all data sent so return to start
 				Rx_sequence_number[select] <= Rx_sequence_number[select] + 32'b1;
+				state <= IDLE; 		// all data sent so return to start
 			end
 		end
 
@@ -391,7 +407,7 @@ always @(posedge tx_clock)
 						
 		response:  
 			begin 
-				udp_tx_length <= 16'd30 + HEADER_LENGTH;	// Total of 60 bytes (was 16'd50)
+				udp_tx_length <= 16'd36 + HEADER_LENGTH;	// Total of 60 bytes (was 16'd50)
 				response_shift_reg <= response_tx_bits;
 				udp_tx_request <= 1'b1;	
 				if (udp_tx_enable) begin

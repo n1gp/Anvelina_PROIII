@@ -29,7 +29,7 @@ set_global_assignment -name DEVICE EP4CE115F29I7
 set_global_assignment -name TOP_LEVEL_ENTITY Orion
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "22:57:39  JANUARY 08, 2014"
-set_global_assignment -name LAST_QUARTUS_VERSION "19.1.0 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
 set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP "-40"
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
@@ -61,7 +61,7 @@ set_location_assignment PIN_U22 -to ATTN_LE_2
 set_location_assignment PIN_B8 -to CBCLK
 set_location_assignment PIN_A7 -to CDIN
 set_location_assignment PIN_B3 -to CDOUT
-set_location_assignment PIN_AG14 -to CLK_25MHZ
+set_location_assignment PIN_AG14 -to CLOCK_25MHZ
 set_location_assignment PIN_C10 -to CLRCIN
 set_location_assignment PIN_C13 -to CLRCOUT
 set_location_assignment PIN_C14 -to CMCLK
@@ -243,8 +243,6 @@ set_global_assignment -name SEARCH_PATH ethernet/
 set_global_assignment -name SEARCH_PATH Ethernet/
 set_global_assignment -name SEARCH_PATH Polyphase_FIR/
 set_global_assignment -name SEARCH_PATH polyphase_fir/
-set_global_assignment -name VERILOG_FILE Mux_clear.v
-set_global_assignment -name VERILOG_FILE Rx_fifo_ctrl0.v
 set_global_assignment -name VERILOG_FILE Ethernet/Rx_fifo.v
 set_global_assignment -name MIF_FILE sine_256.mif
 set_global_assignment -name VERILOG_FILE Ethernet/send_data.v
@@ -293,6 +291,8 @@ set_global_assignment -name VERILOG_FILE Apollo.v
 set_global_assignment -name VERILOG_FILE cdc_mcp.v
 set_global_assignment -name VERILOG_FILE cdc_sync.v
 set_global_assignment -name VERILOG_FILE cic.v
+set_global_assignment -name VERILOG_FILE cic_integrator.v
+set_global_assignment -name VERILOG_FILE cic_comb.v
 set_global_assignment -name VERILOG_FILE cordic.v
 set_global_assignment -name VERILOG_FILE cpl_cordic.v
 set_global_assignment -name VERILOG_FILE debounce.v
@@ -367,4 +367,6 @@ set_location_assignment PIN_AA7 -to DEBUG_LED16
 set_location_assignment PIN_AA6 -to DEBUG_LED17
 set_location_assignment PIN_Y6 -to DEBUG_LED18
 set_location_assignment PIN_Y4 -to DEBUG_LED19
+
+
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

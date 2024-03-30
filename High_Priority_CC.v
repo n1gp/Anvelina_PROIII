@@ -89,6 +89,7 @@ module High_Priority_CC
 				output reg [31:0]Rx_frequency[0:NR-1] /* ramstyle = "logic" */,		
 				output reg [31:0]Tx0_frequency,
 				output reg [47:0]Alex_data,
+				output reg [15:0]Alex_Tx_data,
 				output reg  [7:0]drive_level,
 				output reg  [4:0]Attenuator0,
 				output reg  [4:0]Attenuator1,
@@ -116,6 +117,7 @@ reg state;
 
 reg [31:0]temp_Rx_frequency[0:NR-1];
 reg [47:0]temp_Alex_data;
+reg [15:0]temp_Alex_Tx_data;
 
 // per NR number
 genvar i;
@@ -197,6 +199,8 @@ begin
 						
 						// parse the Alex data bytes into temp_Alex_data
 						// NOTE: Tx filters data is on top 16 bits for ANAN-7000-8000
+						1428: temp_Alex_Tx_data [15:8]	<= udp_rx_data; // Tx filters data high byte with Tx ANT selection
+						1429: temp_Alex_Tx_data [7:0]	<= udp_rx_data; // Tx filters data low byte with Tx ANT selection
 						1430: temp_Alex_data [31:24]	<= udp_rx_data; // Rx1 filters high byte
 						1431: temp_Alex_data [23:16]	<= udp_rx_data; // Rx1 filters low byte
 						1432:	temp_Alex_data [47:40]  <= udp_rx_data; // Tx filters data high byte
@@ -204,7 +208,10 @@ begin
 						1434:	temp_Alex_data [15:8]   <= udp_rx_data; // Rx0 filters data high byte
 						1435:	temp_Alex_data [7:0]    <= udp_rx_data; // Rx0 filters data low byte	
 		
-						1437:	Alex_data <= temp_Alex_data;
+						1437: begin
+									Alex_data <= temp_Alex_data;
+									Alex_Tx_data <= temp_Alex_Tx_data;
+								end 
 		
 						1442: begin 
 									Attenuator1 <= udp_rx_data[4:0];
