@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="US-ASCII" standalone="yes"?>
 <cof>
 	<eprom_name>EPCS128</eprom_name>
-	<output_filename>/home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Anvelina_Bootloader_P2Application_v2.2.4.pof</output_filename>
+	<output_filename>/home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/output_file.pof</output_filename>
 	<n_pages>2</n_pages>
 	<width>1</width>
 	<mode>7</mode>
