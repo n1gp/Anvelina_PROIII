@@ -1,0 +1,17 @@
+#+LANGUAGE:  en
+#+STARTUP: showeverything
+
+* Anvelina PROIII Protocol 2 Application Source Code
+
+The Releases area will contain an:
+
+RBF (Metis_Anvelina_ProIII_Orion_vx.x.x.rbf) file for updating the P2 application from a programmer via ethernet
+
+POF (Anvelina_Bootloader_P2Application_vx.x.x.pof) file for updating the Bootloader AND P2 application from a USB Blaster eeprom programmer
+
+
+See:
+
+[[https://github.com/n1gp/Anvelina_PROIII_Bootloader][Anvelina_PROIII_Bootloader]]
+
+for the Bootloader code.
