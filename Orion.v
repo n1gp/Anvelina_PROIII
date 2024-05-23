@@ -675,12 +675,12 @@ module Orion(
   output nADCCS, 
   
   //Tx Attenuator (F1912)
-  //output TX_ATTN_LE,					// High for parallel mode
-  //output TX_ATTN_CLK,				// not used in parallel mode  
-  //output TX_ATTN_DATA,				// not used in parallel mode
-  //output [5:0] TX_ATTEN,		   // [0] = bit 0, [1] = bit 1, [2] = bit 4, [3] = bit 8 etc.
-  //output TX_ATTN_MODE,				// Low for parallel mode 
-  //input	TX_ATTEN_SELECT,			// Low for Tx attenuator, high for DAC current
+  output TX_ATTN_LE,					// High for parallel mode
+  output TX_ATTN_CLK,				// not used in parallel mode  
+  output TX_ATTN_DATA,				// not used in parallel mode
+  output [5:0] TX_ATTEN,		   // [0] = bit 0, [1] = bit 1, [2] = bit 4, [3] = bit 8 etc.
+  output TX_ATTN_MODE,				// Low for parallel mode 
+  input	TX_ATTEN_SELECT,			// Low for Tx attenuator, high for DAC current
  
   //alex/apollo spi
   output SPI_SDO,                //SPI data to Alex or Apollo 
@@ -754,7 +754,7 @@ module Orion(
   //output wire RAM_A1,
   //output wire RAM_A2,
   //output wire RAM_A3,
-  output wire RAM_A4,
+  //output wire RAM_A4,
   //output wire RAM_A5,
   //output wire RAM_A6,
   output wire RAM_A7,
@@ -778,7 +778,7 @@ assign RAM_A0  = 0;
 //assign RAM_A1  = 0;
 //assign RAM_A2  = 0;
 //assign RAM_A3  = 0;
-assign RAM_A4  = 0;
+//assign RAM_A4  = 0;
 //assign RAM_A5  = 0;
 //assign RAM_A6  = 0;
 assign RAM_A7  = 0;
@@ -815,7 +815,7 @@ parameter IF_TPD  = 2;
 
 localparam board_type = 8'h05;		  	// 00 for Metis, 01 for Hermes, 02 for Griffin, 03 for Angelia, and 05 for Orion
 parameter  Orion_version = 8'd22;			// FPGA code version
-parameter  beta_version = 8'd4;	// Should be 0 for official release
+parameter  beta_version = 8'd5;	// Should be 0 for official release
 parameter  protocol_version = 8'd43;	// openHPSDR protocol version implemented
 
 //--------------------------------------------------------------
@@ -1803,11 +1803,28 @@ end
 	settings, based on Drive_Level,is done via ROMs (Tx_Atten and Tx_DAC).
 
 */
+// select Tx attenuator parallel load mode
+
+assign TX_ATTN_LE = 1'b1;
+assign TX_ATTN_MODE = 0;
+
+wire [7:0] Drive_PWM;
+
+Tx_Atten Tx_Attn_inst (.clock(CMCLK), .address(Drive_Level), .q( TX_ATTEN));  // ROM for Tx attenuator settings
+Tx_DAC   Tx_DAC_inst  (.clock(CMCLK), .address(Drive_Level), .q(Drive_PWM)); // ROM for Tx DAC settings
+
+// select DAC PWM source based on Tx_ATTEN_SELECT 
+wire [7:0] PWM_source =  TX_ATTEN_SELECT ? Drive_Level : Drive_PWM;
+
+
+// PWM DAC to set drive current to DAC. PWM_count increments 
+// using rx_clock. If the count is less than the drive 
+// level set by the PC then DAC_ALC will be high, otherwise low.  
 reg [7:0] PWM_count;
 always @ (posedge rx_clock)
 begin 
 	PWM_count <= PWM_count + 1'b1;
-	if (Drive_Level >= PWM_count)
+	if (PWM_source >= PWM_count)
 		DAC_ALC <= 1'b1;
 	else 
 		DAC_ALC <= 1'b0;

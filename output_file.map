@@ -1,7 +1,7 @@
 BLOCK		START ADDRESS		END ADDRESS
 
 Page_0		0x00000000		0x000F68BC
-Page_1		0x00100000		0x00299028
+Page_1		0x00100000		0x0029A321
 
 
 Configuration device: EPCS128
@@ -11,6 +11,9 @@ Quad-Serial configuration device dummy clock cycle: 8
 
 Notes:
 
-- Data checksum for this conversion is 0xDD778028
+- Data checksum for this conversion is 0xDD740DCB
 
 - All the addresses in this file are byte addresses
+
+- The following changes from default values for Advanced Options settings are in effect:
+	Disable EPCS ID check: ON

@@ -372,4 +372,28 @@ set_location_assignment PIN_Y4 -to DEBUG_LED19
 
 set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to CTRL_TRSW
 set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to atu_ctrl
+set_location_assignment PIN_H15 -to TX_ATTN_CLK
+set_location_assignment PIN_H14 -to TX_ATTN_DATA
+set_location_assignment PIN_H13 -to TX_ATTN_LE
+set_location_assignment PIN_H12 -to TX_ATTN_MODE
+set_location_assignment PIN_H16 -to TX_ATTEN_SELECT
+set_location_assignment PIN_G17 -to TX_ATTEN[0]
+set_location_assignment PIN_G16 -to TX_ATTEN[1]
+set_location_assignment PIN_G15 -to TX_ATTEN[2]
+set_location_assignment PIN_G19 -to TX_ATTEN[3]
+set_location_assignment PIN_G20 -to TX_ATTEN[4]
+set_location_assignment PIN_G21 -to TX_ATTEN[5]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[5]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[4]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[3]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[2]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[1]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[0]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN_SELECT
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_CLK
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_DATA
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_LE
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_MODE
+
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
