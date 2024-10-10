@@ -1,5 +1,5 @@
 Assembler report for Orion
-Wed May 22 14:44:50 2024
+Wed Oct  9 18:21:09 2024
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -9,11 +9,12 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
   1. Legal Notice
   2. Assembler Summary
   3. Assembler Settings
-  4. Assembler Generated Files
-  5. Assembler Device Options: Orion.sof
-  6. Assembler Device Options: Orion.pof
-  7. Assembler Device Options: Orion.rbf
-  8. Assembler Messages
+  4. Parallel Compilation
+  5. Assembler Generated Files
+  6. Assembler Device Options: Orion.sof
+  7. Assembler Device Options: Orion.pof
+  8. Assembler Device Options: Orion.rbf
+  9. Assembler Messages
 
 
 
@@ -40,7 +41,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Wed May 22 14:44:50 2024 ;
+; Assembler Status      ; Successful - Wed Oct  9 18:21:09 2024 ;
 ; Revision Name         ; Orion                                 ;
 ; Top-level Entity Name ; Orion                                 ;
 ; Family                ; Cyclone IV E                          ;
@@ -48,11 +49,55 @@ https://fpgasoftware.intel.com/eula.
 +-----------------------+---------------------------------------+
 
 
-+----------------------------------+
-; Assembler Settings               ;
-+--------+---------+---------------+
-; Option ; Setting ; Default Value ;
-+--------+---------+---------------+
++---------------------------------------------------------------------------------------------------------------+
+; Assembler Settings                                                                                            ;
++-----------------------------------------------------------------------------+----------------+----------------+
+; Option                                                                      ; Setting        ; Default Value  ;
++-----------------------------------------------------------------------------+----------------+----------------+
+; Maximum processors allowed for parallel compilation                         ; All            ;                ;
+; Use smart compilation                                                       ; Off            ; Off            ;
+; Enable parallel Assembler and Timing Analyzer during compilation            ; On             ; On             ;
+; Enable compact report table                                                 ; Off            ; Off            ;
+; Use configuration device                                                    ; On             ; Off            ;
+; Configuration device                                                        ; Epcs128        ; Auto           ;
+; Generate Raw Binary File (.rbf) For Target Device                           ; On             ; Off            ;
+; Generate compressed bitstreams                                              ; On             ; On             ;
+; Compression mode                                                            ; Off            ; Off            ;
+; Clock source for configuration device                                       ; Internal       ; Internal       ;
+; Clock frequency of the configuration device                                 ; 10 MHZ         ; 10 MHz         ;
+; Divide clock frequency by                                                   ; 1              ; 1              ;
+; Auto user code                                                              ; On             ; On             ;
+; Voltage output format                                                       ; Auto discovery ; Auto discovery ;
+; Configuration device auto user code                                         ; Off            ; Off            ;
+; Generate Tabular Text File (.ttf) For Target Device                         ; Off            ; Off            ;
+; Generate Hexadecimal (Intel-Format) Output File (.hexout) for Target Device ; Off            ; Off            ;
+; Hexadecimal Output File start address                                       ; 0              ; 0              ;
+; Hexadecimal Output File count direction                                     ; Up             ; Up             ;
+; Release clears before tri-states                                            ; Off            ; Off            ;
+; Auto-restart configuration after error                                      ; On             ; On             ;
+; Enable OCT_DONE                                                             ; Off            ; Off            ;
+; Generate Serial Vector Format File (.svf) for Target Device                 ; Off            ; Off            ;
+; Generate a JEDEC STAPL Format File (.jam) for Target Device                 ; Off            ; Off            ;
+; Generate a compressed Jam STAPL Byte Code 2.0 File (.jbc) for Target Device ; Off            ; Off            ;
+; Generate a compressed Jam STAPL Byte Code 2.0 File (.jbc) for Target Device ; On             ; On             ;
++-----------------------------------------------------------------------------+----------------+----------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 32          ;
+; Maximum allowed            ; 16          ;
+;                            ;             ;
+; Average used               ; 1.18        ;
+; Maximum used               ; 16          ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-16        ;   1.2%      ;
++----------------------------+-------------+
 
 
 +-------------------------------------------------------------+
@@ -71,8 +116,8 @@ https://fpgasoftware.intel.com/eula.
 +----------------+--------------------+
 ; Option         ; Setting            ;
 +----------------+--------------------+
-; JTAG usercode  ; 0x035821D6         ;
-; Checksum       ; 0x035821D6         ;
+; JTAG usercode  ; 0x03727D2B         ;
+; Checksum       ; 0x03727D2B         ;
 +----------------+--------------------+
 
 
@@ -82,7 +127,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option             ; Setting        ;
 +--------------------+----------------+
 ; JTAG usercode      ; 0x00000000     ;
-; Checksum           ; 0xEBDAB423     ;
+; Checksum           ; 0xEBC2FFDF     ;
 ; Compression Ratio  ; 2              ;
 +--------------------+----------------+
 
@@ -103,14 +148,84 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Wed May 22 14:44:39 2024
+    Info: Processing started: Wed Oct  9 18:20:32 2024
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off Orion -c Orion
+Info (332164): Evaluating HDL-embedded SDC commands
+    Info (332165): Entity dcfifo_8vn1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_4f9:dffpipe18|dffe19a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_2f9:dffpipe14|dffe15a* 
+    Info (332165): Entity dcfifo_aap1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_ue9:dffpipe17|dffe18a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_te9:dffpipe14|dffe15a* 
+    Info (332165): Entity dcfifo_dmo1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_re9:dffpipe15|dffe16a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_qe9:dffpipe12|dffe13a* 
+    Info (332165): Entity dcfifo_h9m1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_1f9:dffpipe14|dffe15a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_0f9:dffpipe11|dffe12a* 
+    Info (332165): Entity dcfifo_lfm1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_8f9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_7f9:dffpipe6|dffe7a* 
+    Info (332165): Entity dcfifo_ppn1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_6f9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_5f9:dffpipe6|dffe7a* 
+    Info (332165): Entity dcfifo_sjo1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_af9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_9f9:dffpipe6|dffe7a* 
+Info (332104): Reading SDC File: 'Orion.sdc'
+Info (332110): Deriving PLL clocks
+    Info (332110): create_generated_clock -source {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]} -duty_cycle 50.00 -name {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]} {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]}
+    Info (332110): create_generated_clock -source {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]} -phase 90.00 -duty_cycle 50.00 -name {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1]} {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1]}
+    Info (332110): create_generated_clock -source {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 10 -duty_cycle 50.00 -name {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]} {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]}
+    Info (332110): create_generated_clock -source {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 50 -duty_cycle 50.00 -name {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]} {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]}
+    Info (332110): create_generated_clock -source {PLL_IF_inst|altpll_component|auto_generated|pll1|inclk[0]} -phase 90.00 -duty_cycle 50.00 -name {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]} {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]}
+    Info (332110): create_generated_clock -source {PLL_IF_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 10 -duty_cycle 50.00 -name {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]} {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]}
+    Info (332110): create_generated_clock -source {PLL_IF_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 40 -phase 180.00 -duty_cycle 50.00 -name {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]} {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]}
+    Info (332110): create_generated_clock -source {PLL_IF_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 2560 -duty_cycle 50.00 -name {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]} {PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]}
+    Info (332110): create_generated_clock -source {PLL_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 1536 -multiply_by 125 -duty_cycle 50.00 -name {PLL_inst|altpll_component|auto_generated|pll1|clk[0]} {PLL_inst|altpll_component|auto_generated|pll1|clk[0]}
+    Info (332110): create_generated_clock -source {PLL_30MHz_inst|altpll_component|auto_generated|pll1|inclk[0]} -divide_by 4 -duty_cycle 50.00 -name {PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]} {PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]}
+Info (332151): Clock uncertainty is not calculated until you update the timing netlist.
+Info (332123): Deriving Clock Uncertainty. Please refer to report_sdc in the Timing Analyzer to see clock uncertainties.
+Info (332129): Detected timing requirements -- optimizing circuit to achieve only the specified requirements
+Info (332111): Found 28 clocks
+    Info (332111):   Period   Clock Name
+    Info (332111): ======== ============
+    Info (332111):    8.138      _122MHz
+    Info (332111):  325.520        CBCLK
+    Info (332111):   40.000  CLOCK_25MHZ
+    Info (332111): 20833.280       CLRCIN
+    Info (332111): 20833.280      CLRCOUT
+    Info (332111):   81.380        CMCLK
+    Info (332111):  162.760     data_clk
+    Info (332111): 1302.080    data_clk2
+    Info (332111):    8.138 LTC2208_122MHz
+    Info (332111):    8.138 LTC2208_122MHz_2
+    Info (332111):    8.000 network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]
+    Info (332111):    8.000 network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[1]
+    Info (332111):   80.000 network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[2]
+    Info (332111):  400.000 network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[3]
+    Info (332111):  100.000    OSC_10MHZ
+    Info (332111):    8.000   PHY_CLK125
+    Info (332111):    8.000 PHY_RX_CLOCK
+    Info (332111):    8.000 PHY_TX_CLOCK
+    Info (332111):   32.552 PLL_30MHz_inst|altpll_component|auto_generated|pll1|clk[0]
+    Info (332111):    8.138 PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0]
+    Info (332111):   81.380 PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1]
+    Info (332111):  325.520 PLL_IF_inst|altpll_component|auto_generated|pll1|clk[2]
+    Info (332111): 20833.280 PLL_IF_inst|altpll_component|auto_generated|pll1|clk[3]
+    Info (332111):   99.999 PLL_inst|altpll_component|auto_generated|pll1|clk[0]
+    Info (332111):    8.000     tx_clock
+    Info (332111):    8.138  virt_122MHz
+    Info (332111):  325.520   virt_CBCLK
+    Info (332111):    8.000 virt_PHY_RX_CLOCK
+Info (223000): Starting Vectorless Power Activity Estimation
+Info (223001): Completed Vectorless Power Activity Estimation
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 692 megabytes
-    Info: Processing ended: Wed May 22 14:44:51 2024
-    Info: Elapsed time: 00:00:12
-    Info: Total CPU time (on all processors): 00:00:12
+    Info: Peak virtual memory: 1281 megabytes
+    Info: Processing ended: Wed Oct  9 18:21:10 2024
+    Info: Elapsed time: 00:00:38
+    Info: Total CPU time (on all processors): 00:00:38
 
 

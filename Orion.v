@@ -751,12 +751,12 @@ module Orion(
  
 	// RAM
   output wire RAM_A0,
-  //output wire RAM_A1,
-  //output wire RAM_A2,
+  output wire RAM_A1,
+  output wire RAM_A2,
   //output wire RAM_A3,
-  //output wire RAM_A4,
-  //output wire RAM_A5,
-  //output wire RAM_A6,
+  output wire RAM_A4,
+  output wire RAM_A5,
+  output wire RAM_A6,
   output wire RAM_A7,
   //output wire RAM_A8,
   //output wire RAM_A9,
@@ -775,12 +775,12 @@ assign USEROUT5 = run ? Open_Collector[6] : 1'b0;
 assign USEROUT6 = run ? Open_Collector[7] : 1'b0; 
 
 assign RAM_A0  = 0;
-//assign RAM_A1  = 0;
-//assign RAM_A2  = 0;
+assign RAM_A1  = 0;
+assign RAM_A2  = 0;
 //assign RAM_A3  = 0;
-//assign RAM_A4  = 0;
-//assign RAM_A5  = 0;
-//assign RAM_A6  = 0;
+assign RAM_A4  = 0;
+assign RAM_A5  = 0;
+assign RAM_A6  = 0;
 assign RAM_A7  = 0;
 //assign RAM_A8  = 0;
 //assign RAM_A9  = 0;
@@ -815,7 +815,7 @@ parameter IF_TPD  = 2;
 
 localparam board_type = 8'h05;		  	// 00 for Metis, 01 for Hermes, 02 for Griffin, 03 for Angelia, and 05 for Orion
 parameter  Orion_version = 8'd22;			// FPGA code version
-parameter  beta_version = 8'd5;	// Should be 0 for official release
+parameter  beta_version = 8'd6;	// Should be 0 for official release
 parameter  protocol_version = 8'd43;	// openHPSDR protocol version implemented
 
 //--------------------------------------------------------------
