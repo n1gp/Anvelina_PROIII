@@ -3,6 +3,11 @@
 
 * Anvelina PROIII Protocol 2 Application Source Code
 
+*** Branch Updates ***
+Branch pro3_deluxe is used for the Anvelina Pro3 serial number 3.7 and greater.
+Branch pro3 is used for the Anvelina Pro3 serial number 3.6 and lower.
+
+
 The Releases area will contain an:
 
 RBF (Metis_Anvelina_ProIII_Orion_vx.x.x.rbf) file for updating the P2 application from a programmer via ethernet
@@ -14,4 +19,4 @@ See:
 
 [[https://github.com/n1gp/Anvelina_PROIII_Bootloader][Anvelina_PROIII_Bootloader]]
 
-for the Bootloader code.
+for the Bootloader code. The Bootloader is the same for all versions of Anvelina.
