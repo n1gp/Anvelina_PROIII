@@ -1,6 +1,6 @@
 Flow report for Orion
-Wed Oct  9 19:08:59 2024
-Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Sun Sep 29 13:49:49 2024
+Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 
 
 ---------------------
@@ -21,7 +21,7 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2020  Intel Corporation. All rights reserved.
+Copyright (C) 2019  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
@@ -41,20 +41,20 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Wed Oct  9 19:08:11 2024       ;
-; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
+; Flow Status                        ; Successful - Sun Sep 29 13:49:16 2024       ;
+; Quartus Prime Version              ; 19.1.0 Build 670 09/22/2019 SJ Lite Edition ;
 ; Revision Name                      ; Orion                                       ;
 ; Top-level Entity Name              ; Orion                                       ;
 ; Family                             ; Cyclone IV E                                ;
 ; Device                             ; EP4CE115F29I7                               ;
 ; Timing Models                      ; Final                                       ;
 ; Total logic elements               ; 92,619 / 114,480 ( 81 % )                   ;
-;     Total combinational functions  ; 71,673 / 114,480 ( 63 % )                   ;
+;     Total combinational functions  ; 71,660 / 114,480 ( 63 % )                   ;
 ;     Dedicated logic registers      ; 74,916 / 114,480 ( 65 % )                   ;
 ; Total registers                    ; 74926                                       ;
-; Total pins                         ; 182 / 529 ( 34 % )                          ;
+; Total pins                         ; 169 / 529 ( 32 % )                          ;
 ; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 1,229,984 / 3,981,312 ( 31 % )              ;
+; Total memory bits                  ; 1,226,400 / 3,981,312 ( 31 % )              ;
 ; Embedded Multiplier 9-bit elements ; 298 / 532 ( 56 % )                          ;
 ; Total PLLs                         ; 4 / 4 ( 100 % )                             ;
 +------------------------------------+---------------------------------------------+
@@ -65,7 +65,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 10/09/2024 18:22:03 ;
+; Start date & time ; 09/29/2024 13:34:32 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; Orion               ;
 +-------------------+---------------------+
@@ -80,7 +80,7 @@ https://fpgasoftware.intel.com/eula.
 ; ALLOW_POWER_UP_DONT_CARE                ; Off                                    ; On                 ; --          ; --         ;
 ; ALLOW_REGISTER_RETIMING                 ; Off                                    ; On                 ; --          ; --         ;
 ; AUTO_MERGE_PLLS                         ; Off                                    ; On                 ; --          ; --         ;
-; COMPILER_SIGNATURE_ID                   ; 26601950300764.172851252316413         ; --                 ; --          ; --         ;
+; COMPILER_SIGNATURE_ID                   ; 4681966034259.172760607221324          ; --                 ; --          ; --         ;
 ; FITTER_AUTO_EFFORT_DESIRED_SLACK_MARGIN ; 1 ns                                   ; 0 ns               ; --          ; --         ;
 ; MAX_CORE_JUNCTION_TEMP                  ; 100                                    ; --                 ; --          ; --         ;
 ; MIN_CORE_JUNCTION_TEMP                  ; -40                                    ; --                 ; --          ; --         ;
@@ -108,7 +108,6 @@ https://fpgasoftware.intel.com/eula.
 ; PRE_FLOW_SCRIPT_FILE                    ; quartus_sh:make_datetime.tcl           ; --                 ; --          ; --         ;
 ; SEARCH_PATH                             ; ethernet/                              ; --                 ; --          ; --         ;
 ; SEARCH_PATH                             ; Polyphase_FIR/                         ; --                 ; --          ; --         ;
-; SEED                                    ; 2                                      ; 1                  ; --          ; --         ;
 ; VERILOG_INPUT_VERSION                   ; SystemVerilog_2005                     ; Verilog_2001       ; --          ; --         ;
 ; VERILOG_SHOW_LMF_MAPPING_MESSAGES       ; Off                                    ; --                 ; --          ; --         ;
 ; VHDL_INPUT_VERSION                      ; VHDL_2008                              ; VHDL_1993          ; --          ; --         ;
@@ -121,24 +120,24 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:04:14     ; 1.1                     ; 1631 MB             ; 00:04:39                           ;
-; Fitter               ; 00:40:38     ; 1.3                     ; 4342 MB             ; 04:56:38                           ;
-; Assembler            ; 00:00:38     ; 1.2                     ; 1279 MB             ; 00:00:38                           ;
-; Timing Analyzer      ; 00:00:46     ; 2.6                     ; 1674 MB             ; 00:01:35                           ;
-; Total                ; 00:46:16     ; --                      ; --                  ; 05:03:30                           ;
+; Analysis & Synthesis ; 00:02:53     ; 1.1                     ; 5777 MB             ; 00:03:04                           ;
+; Fitter               ; 00:11:07     ; 1.6                     ; 8737 MB             ; 00:59:49                           ;
+; Assembler            ; 00:00:19     ; 1.3                     ; 5607 MB             ; 00:00:20                           ;
+; Timing Analyzer      ; 00:00:30     ; 2.3                     ; 6015 MB             ; 00:00:57                           ;
+; Total                ; 00:14:49     ; --                      ; --                  ; 01:04:10                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
-+------------------------------------------------------------------------------------------+
-; Flow OS Summary                                                                          ;
-+----------------------+------------------+------------------+------------+----------------+
-; Module Name          ; Machine Hostname ; OS Name          ; OS Version ; Processor type ;
-+----------------------+------------------+------------------+------------+----------------+
-; Analysis & Synthesis ; n1gp             ; Debian GNU/Linux ; 12         ; x86_64         ;
-; Fitter               ; n1gp             ; Debian GNU/Linux ; 12         ; x86_64         ;
-; Assembler            ; n1gp             ; Debian GNU/Linux ; 12         ; x86_64         ;
-; Timing Analyzer      ; n1gp             ; Debian GNU/Linux ; 12         ; x86_64         ;
-+----------------------+------------------+------------------+------------+----------------+
++------------------------------------------------------------------------------------+
+; Flow OS Summary                                                                    ;
++----------------------+------------------+------------+------------+----------------+
+; Module Name          ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
++----------------------+------------------+------------+------------+----------------+
+; Analysis & Synthesis ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
+; Fitter               ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
+; Assembler            ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
+; Timing Analyzer      ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
++----------------------+------------------+------------+------------+----------------+
 
 
 ------------

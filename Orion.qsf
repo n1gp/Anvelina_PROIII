@@ -29,7 +29,7 @@ set_global_assignment -name DEVICE EP4CE115F29I7
 set_global_assignment -name TOP_LEVEL_ENTITY Orion
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "22:57:39  JANUARY 08, 2014"
-set_global_assignment -name LAST_QUARTUS_VERSION "20.1.1 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "19.1.0 Lite Edition"
 set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP "-40"
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
@@ -44,7 +44,6 @@ set_global_assignment -name VERILOG_INPUT_VERSION SYSTEMVERILOG_2005
 set_global_assignment -name VERILOG_SHOW_LMF_MAPPING_MESSAGES OFF
 set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
 set_global_assignment -name GENERATE_RBF_FILE ON
-set_global_assignment -name SEED 2
 set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
@@ -244,54 +243,6 @@ set_global_assignment -name SEARCH_PATH ethernet/
 set_global_assignment -name SEARCH_PATH Ethernet/
 set_global_assignment -name SEARCH_PATH Polyphase_FIR/
 set_global_assignment -name SEARCH_PATH polyphase_fir/
-set_location_assignment PIN_C21 -to RAM_A0
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to FPGA_PLL
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[15]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[14]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[13]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[12]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[11]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[10]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[9]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[8]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[7]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[6]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[5]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[4]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[3]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[2]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[1]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[0]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DAC_ALC
-set_location_assignment PIN_Y5 -to DEBUG_LED20
-set_location_assignment PIN_AB5 -to DEBUG_LED11
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to PTT_SELECT
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MICBIAS_ENABLE
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MICBIAS_SELECT
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MIC_SIG_SELECT
-set_location_assignment PIN_AC1 -to DEBUG_LED12
-set_location_assignment PIN_AF2 -to DEBUG_LED13
-set_location_assignment PIN_AB1 -to DEBUG_LED14
-set_location_assignment PIN_Y3 -to DEBUG_LED15
-set_location_assignment PIN_AA7 -to DEBUG_LED16
-set_location_assignment PIN_AA6 -to DEBUG_LED17
-set_location_assignment PIN_Y6 -to DEBUG_LED18
-set_location_assignment PIN_Y4 -to DEBUG_LED19
-
-
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to CTRL_TRSW
-set_location_assignment PIN_H15 -to TX_ATTN_CLK
-set_location_assignment PIN_H14 -to TX_ATTN_DATA
-set_location_assignment PIN_H13 -to TX_ATTN_LE
-set_location_assignment PIN_H12 -to TX_ATTN_MODE
-set_location_assignment PIN_H16 -to TX_ATTEN_SELECT
-set_location_assignment PIN_G17 -to TX_ATTEN[0]
-set_location_assignment PIN_G16 -to TX_ATTEN[1]
-set_location_assignment PIN_G15 -to TX_ATTEN[2]
-set_location_assignment PIN_G19 -to TX_ATTEN[3]
-set_location_assignment PIN_G20 -to TX_ATTEN[4]
-set_location_assignment PIN_G21 -to TX_ATTEN[5]
 set_global_assignment -name VERILOG_FILE Ethernet/Rx_fifo.v
 set_global_assignment -name MIF_FILE sine_256.mif
 set_global_assignment -name VERILOG_FILE Ethernet/send_data.v
@@ -380,13 +331,48 @@ set_global_assignment -name VERILOG_FILE High_Priority_CC.v
 set_global_assignment -name VERILOG_FILE General_CC.v
 set_global_assignment -name VERILOG_FILE tx_atten.v
 set_global_assignment -name VERILOG_FILE tx_dac.v
-set_location_assignment PIN_D28 -to RAM_A1
+set_location_assignment VREFGROUP_B1_N2 -to RAM_A13
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to FPGA_PLL
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[15]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[14]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[13]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[12]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[11]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[10]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[9]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[8]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[7]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[6]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[5]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[4]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[3]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[2]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[1]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[0]
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD
+set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DAC_ALC
+set_location_assignment PIN_Y5 -to DEBUG_LED20
+set_location_assignment PIN_AB5 -to DEBUG_LED11
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to PTT_SELECT
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MICBIAS_ENABLE
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MICBIAS_SELECT
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MIC_SIG_SELECT
+set_location_assignment PIN_AC1 -to DEBUG_LED12
+set_location_assignment PIN_AF2 -to DEBUG_LED13
+set_location_assignment PIN_AB1 -to DEBUG_LED14
+set_location_assignment PIN_Y3 -to DEBUG_LED15
+set_location_assignment PIN_AA7 -to DEBUG_LED16
+set_location_assignment PIN_AA6 -to DEBUG_LED17
+set_location_assignment PIN_Y6 -to DEBUG_LED18
+set_location_assignment PIN_Y4 -to DEBUG_LED19
+
+
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to CTRL_TRSW
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to atu_ctrl
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to CLOCK_25MHZ
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to OSC_10MHZ
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to _122MHz
 set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
 set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
-set_location_assignment PIN_C27 -to RAM_A2
-set_location_assignment IOBANK_7 -to RAM_A5
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to RAM_A5
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to RAM_A7
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to RAM_A13 -disable
-
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to RAM_A7
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

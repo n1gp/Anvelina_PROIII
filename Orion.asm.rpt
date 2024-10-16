@@ -1,6 +1,6 @@
 Assembler report for Orion
-Wed Oct  9 19:08:11 2024
-Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+Sun Sep 29 13:49:16 2024
+Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 
 
 ---------------------
@@ -11,9 +11,9 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
   3. Assembler Settings
   4. Parallel Compilation
   5. Assembler Generated Files
-  6. Assembler Device Options: Orion.sof
-  7. Assembler Device Options: Orion.pof
-  8. Assembler Device Options: Orion.rbf
+  6. Assembler Device Options: E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.sof
+  7. Assembler Device Options: E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.pof
+  8. Assembler Device Options: E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.rbf
   9. Assembler Messages
 
 
@@ -21,7 +21,7 @@ Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2020  Intel Corporation. All rights reserved.
+Copyright (C) 2019  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
@@ -41,7 +41,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Wed Oct  9 19:08:11 2024 ;
+; Assembler Status      ; Successful - Sun Sep 29 13:49:16 2024 ;
 ; Revision Name         ; Orion                                 ;
 ; Top-level Entity Name ; Orion                                 ;
 ; Family                ; Cyclone IV E                          ;
@@ -88,58 +88,58 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 ; Processors                 ; Number      ;
 +----------------------------+-------------+
-; Number detected on machine ; 32          ;
+; Number detected on machine ; 24          ;
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
-; Average used               ; 1.17        ;
+; Average used               ; 1.31        ;
 ; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processors 2-16        ;   1.1%      ;
+;     Processors 2-16        ;   2.1%      ;
 +----------------------------+-------------+
 
 
-+-------------------------------------------------------------+
-; Assembler Generated Files                                   ;
-+-------------------------------------------------------------+
-; File Name                                                   ;
-+-------------------------------------------------------------+
-; /home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Orion.sof ;
-; /home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Orion.pof ;
-; /home/mh/Desktop/SDR/HPSDR/LATEST/Anvelina_PROIII/Orion.rbf ;
-+-------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------------------------+
+; Assembler Generated Files                                                                                              ;
++------------------------------------------------------------------------------------------------------------------------+
+; File Name                                                                                                              ;
++------------------------------------------------------------------------------------------------------------------------+
+; E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.sof ;
+; E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.pof ;
+; E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.rbf ;
++------------------------------------------------------------------------------------------------------------------------+
 
 
-+-------------------------------------+
-; Assembler Device Options: Orion.sof ;
-+----------------+--------------------+
-; Option         ; Setting            ;
-+----------------+--------------------+
-; JTAG usercode  ; 0x037BCD56         ;
-; Checksum       ; 0x037BCD56         ;
-+----------------+--------------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assembler Device Options: E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.sof ;
++----------------+---------------------------------------------------------------------------------------------------------------------------------+
+; Option         ; Setting                                                                                                                         ;
++----------------+---------------------------------------------------------------------------------------------------------------------------------+
+; JTAG usercode  ; 0x0375301D                                                                                                                      ;
+; Checksum       ; 0x0375301D                                                                                                                      ;
++----------------+---------------------------------------------------------------------------------------------------------------------------------+
 
 
-+-------------------------------------+
-; Assembler Device Options: Orion.pof ;
-+--------------------+----------------+
-; Option             ; Setting        ;
-+--------------------+----------------+
-; JTAG usercode      ; 0x00000000     ;
-; Checksum           ; 0xEBABC37C     ;
-; Compression Ratio  ; 2              ;
-+--------------------+----------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assembler Device Options: E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.pof ;
++--------------------+-----------------------------------------------------------------------------------------------------------------------------+
+; Option             ; Setting                                                                                                                     ;
++--------------------+-----------------------------------------------------------------------------------------------------------------------------+
+; JTAG usercode      ; 0x00000000                                                                                                                  ;
+; Checksum           ; 0xEBB2F367                                                                                                                  ;
+; Compression Ratio  ; 2                                                                                                                           ;
++--------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 
-+-------------------------------------+
-; Assembler Device Options: Orion.rbf ;
-+---------------------+---------------+
-; Option              ; Setting       ;
-+---------------------+---------------+
-; Raw Binary File     ;               ;
-;  Compression Ratio  ; 2             ;
-+---------------------+---------------+
++--------------------------------------------------------------------------------------------------------------------------------------------------+
+; Assembler Device Options: E:/Anvelia_sdr/Anvelina_PRO_II/OpenHPSDR-Firmware-master/OpenHPSDR-Firmware-master/AnvelinaPROIII1000T_2.2.4/Orion.rbf ;
++---------------------+----------------------------------------------------------------------------------------------------------------------------+
+; Option              ; Setting                                                                                                                    ;
++---------------------+----------------------------------------------------------------------------------------------------------------------------+
+; Raw Binary File     ;                                                                                                                            ;
+;  Compression Ratio  ; 2                                                                                                                          ;
++---------------------+----------------------------------------------------------------------------------------------------------------------------+
 
 
 +--------------------+
@@ -147,31 +147,31 @@ https://fpgasoftware.intel.com/eula.
 +--------------------+
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
-    Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Wed Oct  9 19:07:33 2024
+    Info: Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
+    Info: Processing started: Sun Sep 29 13:48:57 2024
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off Orion -c Orion
 Info (332164): Evaluating HDL-embedded SDC commands
+    Info (332165): Entity dcfifo_4ep1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_ef9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_df9:dffpipe6|dffe7a* 
     Info (332165): Entity dcfifo_8vn1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_4f9:dffpipe18|dffe19a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_2f9:dffpipe14|dffe15a* 
-    Info (332165): Entity dcfifo_aap1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_ue9:dffpipe17|dffe18a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_te9:dffpipe14|dffe15a* 
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_if9:dffpipe11|dffe12a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_hf9:dffpipe8|dffe9a* 
     Info (332165): Entity dcfifo_dmo1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_re9:dffpipe15|dffe16a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_qe9:dffpipe12|dffe13a* 
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_cf9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_bf9:dffpipe6|dffe7a* 
+    Info (332165): Entity dcfifo_fjm1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_mf9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_lf9:dffpipe6|dffe7a* 
     Info (332165): Entity dcfifo_h9m1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_1f9:dffpipe14|dffe15a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_0f9:dffpipe11|dffe12a* 
-    Info (332165): Entity dcfifo_lfm1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_8f9:dffpipe9|dffe10a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_7f9:dffpipe6|dffe7a* 
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_gf9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_ff9:dffpipe6|dffe7a* 
+    Info (332165): Entity dcfifo_jio1
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_of9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_nf9:dffpipe6|dffe7a* 
     Info (332165): Entity dcfifo_ppn1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_6f9:dffpipe9|dffe10a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_5f9:dffpipe6|dffe7a* 
-    Info (332165): Entity dcfifo_sjo1
-        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_af9:dffpipe9|dffe10a* 
-        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_9f9:dffpipe6|dffe7a* 
+        Info (332166): set_false_path -from *rdptr_g* -to *ws_dgrp|dffpipe_kf9:dffpipe9|dffe10a* 
+        Info (332166): set_false_path -from *delayed_wrptr_g* -to *rs_dgwp|dffpipe_jf9:dffpipe6|dffe7a* 
 Info (332104): Reading SDC File: 'Orion.sdc'
 Info (332110): Deriving PLL clocks
     Info (332110): create_generated_clock -source {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|inclk[0]} -duty_cycle 50.00 -name {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]} {network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0]}
@@ -223,9 +223,9 @@ Info (223001): Completed Vectorless Power Activity Estimation
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 1279 megabytes
-    Info: Processing ended: Wed Oct  9 19:08:12 2024
-    Info: Elapsed time: 00:00:39
-    Info: Total CPU time (on all processors): 00:00:39
+    Info: Peak virtual memory: 5607 megabytes
+    Info: Processing ended: Sun Sep 29 13:49:17 2024
+    Info: Elapsed time: 00:00:20
+    Info: Total CPU time (on all processors): 00:00:20
 
 
