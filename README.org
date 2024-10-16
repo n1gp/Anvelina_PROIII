@@ -19,4 +19,4 @@ See:
 
 [[https://github.com/n1gp/Anvelina_PROIII_Bootloader][Anvelina_PROIII_Bootloader]]
 
-for the Bootloader code. The Bootloader is the same for all versions of Anvelina.
+for the Bootloader code. The Bootloader is the same for all versions of Anvelina Pro3.
