@@ -1,5 +1,5 @@
 Assembler report for Orion
-Wed Oct  9 18:21:09 2024
+Wed Oct  9 19:08:11 2024
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -41,7 +41,7 @@ https://fpgasoftware.intel.com/eula.
 +---------------------------------------------------------------+
 ; Assembler Summary                                             ;
 +-----------------------+---------------------------------------+
-; Assembler Status      ; Successful - Wed Oct  9 18:21:09 2024 ;
+; Assembler Status      ; Successful - Wed Oct  9 19:08:11 2024 ;
 ; Revision Name         ; Orion                                 ;
 ; Top-level Entity Name ; Orion                                 ;
 ; Family                ; Cyclone IV E                          ;
@@ -91,12 +91,12 @@ https://fpgasoftware.intel.com/eula.
 ; Number detected on machine ; 32          ;
 ; Maximum allowed            ; 16          ;
 ;                            ;             ;
-; Average used               ; 1.18        ;
+; Average used               ; 1.17        ;
 ; Maximum used               ; 16          ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processors 2-16        ;   1.2%      ;
+;     Processors 2-16        ;   1.1%      ;
 +----------------------------+-------------+
 
 
@@ -116,8 +116,8 @@ https://fpgasoftware.intel.com/eula.
 +----------------+--------------------+
 ; Option         ; Setting            ;
 +----------------+--------------------+
-; JTAG usercode  ; 0x03727D2B         ;
-; Checksum       ; 0x03727D2B         ;
+; JTAG usercode  ; 0x037BCD56         ;
+; Checksum       ; 0x037BCD56         ;
 +----------------+--------------------+
 
 
@@ -127,7 +127,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option             ; Setting        ;
 +--------------------+----------------+
 ; JTAG usercode      ; 0x00000000     ;
-; Checksum           ; 0xEBC2FFDF     ;
+; Checksum           ; 0xEBABC37C     ;
 ; Compression Ratio  ; 2              ;
 +--------------------+----------------+
 
@@ -148,7 +148,7 @@ https://fpgasoftware.intel.com/eula.
 Info: *******************************************************************
 Info: Running Quartus Prime Assembler
     Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
-    Info: Processing started: Wed Oct  9 18:20:32 2024
+    Info: Processing started: Wed Oct  9 19:07:33 2024
 Info: Command: quartus_asm --read_settings_files=off --write_settings_files=off Orion -c Orion
 Info (332164): Evaluating HDL-embedded SDC commands
     Info (332165): Entity dcfifo_8vn1
@@ -223,9 +223,9 @@ Info (223001): Completed Vectorless Power Activity Estimation
 Info (115031): Writing out detailed assembly data for power analysis
 Info (115030): Assembler is generating device programming files
 Info: Quartus Prime Assembler was successful. 0 errors, 0 warnings
-    Info: Peak virtual memory: 1281 megabytes
-    Info: Processing ended: Wed Oct  9 18:21:10 2024
-    Info: Elapsed time: 00:00:38
-    Info: Total CPU time (on all processors): 00:00:38
+    Info: Peak virtual memory: 1279 megabytes
+    Info: Processing ended: Wed Oct  9 19:08:12 2024
+    Info: Elapsed time: 00:00:39
+    Info: Total CPU time (on all processors): 00:00:39
 
 

@@ -1,5 +1,5 @@
 Flow report for Orion
-Wed Oct  9 18:21:58 2024
+Wed Oct  9 19:08:59 2024
 Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
@@ -41,15 +41,15 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Wed Oct  9 18:21:09 2024       ;
+; Flow Status                        ; Successful - Wed Oct  9 19:08:11 2024       ;
 ; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; Orion                                       ;
 ; Top-level Entity Name              ; Orion                                       ;
 ; Family                             ; Cyclone IV E                                ;
 ; Device                             ; EP4CE115F29I7                               ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 92,542 / 114,480 ( 81 % )                   ;
-;     Total combinational functions  ; 71,668 / 114,480 ( 63 % )                   ;
+; Total logic elements               ; 92,619 / 114,480 ( 81 % )                   ;
+;     Total combinational functions  ; 71,673 / 114,480 ( 63 % )                   ;
 ;     Dedicated logic registers      ; 74,916 / 114,480 ( 65 % )                   ;
 ; Total registers                    ; 74926                                       ;
 ; Total pins                         ; 182 / 529 ( 34 % )                          ;
@@ -65,7 +65,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 10/09/2024 17:41:55 ;
+; Start date & time ; 10/09/2024 18:22:03 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; Orion               ;
 +-------------------+---------------------+
@@ -80,7 +80,7 @@ https://fpgasoftware.intel.com/eula.
 ; ALLOW_POWER_UP_DONT_CARE                ; Off                                    ; On                 ; --          ; --         ;
 ; ALLOW_REGISTER_RETIMING                 ; Off                                    ; On                 ; --          ; --         ;
 ; AUTO_MERGE_PLLS                         ; Off                                    ; On                 ; --          ; --         ;
-; COMPILER_SIGNATURE_ID                   ; 26601950300764.172851011412097         ; --                 ; --          ; --         ;
+; COMPILER_SIGNATURE_ID                   ; 26601950300764.172851252316413         ; --                 ; --          ; --         ;
 ; FITTER_AUTO_EFFORT_DESIRED_SLACK_MARGIN ; 1 ns                                   ; 0 ns               ; --          ; --         ;
 ; MAX_CORE_JUNCTION_TEMP                  ; 100                                    ; --                 ; --          ; --         ;
 ; MIN_CORE_JUNCTION_TEMP                  ; -40                                    ; --                 ; --          ; --         ;
@@ -121,11 +121,11 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:04:12     ; 1.1                     ; 1634 MB             ; 00:04:38                           ;
-; Fitter               ; 00:33:46     ; 1.3                     ; 4352 MB             ; 04:14:11                           ;
-; Assembler            ; 00:00:37     ; 1.2                     ; 1281 MB             ; 00:00:38                           ;
-; Timing Analyzer      ; 00:00:47     ; 2.6                     ; 1681 MB             ; 00:01:34                           ;
-; Total                ; 00:39:22     ; --                      ; --                  ; 04:21:01                           ;
+; Analysis & Synthesis ; 00:04:14     ; 1.1                     ; 1631 MB             ; 00:04:39                           ;
+; Fitter               ; 00:40:38     ; 1.3                     ; 4342 MB             ; 04:56:38                           ;
+; Assembler            ; 00:00:38     ; 1.2                     ; 1279 MB             ; 00:00:38                           ;
+; Timing Analyzer      ; 00:00:46     ; 2.6                     ; 1674 MB             ; 00:01:35                           ;
+; Total                ; 00:46:16     ; --                      ; --                  ; 05:03:30                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
