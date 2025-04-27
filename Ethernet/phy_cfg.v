@@ -47,38 +47,13 @@ module phy_cfg(
 
 
 //mdio register values
-wire [15:0] values [7:0];
-
-
-
-assign values[7] = 16'h8104; // RX clk to other skew of 1.2ns to match ksz9031rn, RGMII 2.0
-assign values[6] = 16'h65a6;
-assign values[5] = 16'h8105;
-assign values[4] = 16'h4444; 
-
-assign values[3] = 16'h0200; // Allow 1GB but don't advertise half duplex in 1000BASET
-assign values[2] = 16'h1300; // Restart autonegotiation
-
-assign values[1] = 16'hxxxx;
-assign values[0] = 16'hxxxx;
+logic [15:0] values [19:0];
 
 //mdio register addresses 
-wire [4:0] addresses [7:0];
+logic [4:0] addresses [19:0];
 
-
-assign addresses[7] = 5'h0b;
-assign addresses[6] = 5'h0c;
-assign addresses[5] = 5'h0b;
-assign addresses[4] = 5'h0c;
-
-assign addresses[3] = 5'h09;
-assign addresses[2] = 5'h00;
-
-assign addresses[1] = 5'h03; // PHY identifier 2
-assign addresses[0] = 5'h1f; // PHY Control 
-
-reg [2:0] word_no = 3'h0;
-
+reg [4:0] word_no;
+reg [1:0] phychip;
 
 //-----------------------------------------------------------------------------
 //                            state machine
@@ -96,41 +71,117 @@ reg state = READING;
 
 
 always @(posedge clock) begin
-  if (init_request) init_required <= 1'b1;
+  // find out if we're a 9021 or a 9031
+  if (!phychip[1])  begin
+    word_no <= 5'd19;
+    addresses[19] <= 3; 
+    values[19] <= 16'hxxxx;
+
+    if (ready) begin
+      rd_request <= 1'b1;
+      if (rd_data[9:4] == 6'b100001) begin // 9021
+        phychip <= 2'b11;
+        is_9031 <= 1'b0;
+        values[8] <= 16'h0200; // Allow 1GB but don't advertise half duplex in 1000BASET
+        values[7] <= 16'h8104;
+        values[6] <= 16'h44c7; // RGMII Clock and Control Pad Skew
+        values[5] <= 16'h8105;
+        values[4] <= 16'h7777; // RGMII RX Data Pad Skew
+        values[3] <= 16'h8106;
+        values[2] <= 16'h5555; // RGMII TX Data Pad Skew
+        values[1] <= 16'h1300; // Restart autonegotiation
+        values[0] <= 16'hxxxx;
+        addresses[8] <= 9;
+        addresses[7] <= 11;
+        addresses[6] <= 12;
+        addresses[5] <= 11;
+        addresses[4] <= 12;
+        addresses[3] <= 11;
+        addresses[2] <= 12;
+        addresses[1] <= 0;
+        addresses[0] <= 31; 
+      end
+      else if (rd_data[9:4] == 6'b100010) begin // 9031
+        phychip <= 2'b10;
+        is_9031 <= 1'b1;
+        values[18] <= 16'h0200; // Allow 1GB but don't advertise half duplex in 1000BASET
+        values[17] <= 16'h0002;
+        values[16] <= 16'h0004;
+        values[15] <= 16'h4002;
+        values[14] <= 16'h0056; // RGMII Control Signal Pad Skew
+        values[13] <= 16'h0002;
+        values[12] <= 16'h0005;
+        values[11] <= 16'h4002;
+        values[10] <= 16'h5555; // RGMII RX Data Pad Skew
+        values[9] <= 16'h0002;
+        values[8] <= 16'h0006;
+        values[7] <= 16'h4002;
+        values[6] <= 16'h6666; // RGMII TX Data Pad Skew
+        values[5] <= 16'h0002;
+        values[4] <= 16'h0008;
+        values[3] <= 16'h4002;
+        values[2] <= 16'b0000_00_11110_00011; // RGMII Clock Pad Skew TX 5bits RX 5bits
+        values[1] <= 16'h1300; // Restart autonegotiation
+        values[0] <= 16'hxxxx;
+        addresses[18] <= 9;
+        addresses[17] <= 5'h0d;
+        addresses[16] <= 5'h0e;
+        addresses[15] <= 5'h0d;
+        addresses[14] <= 5'h0e;
+        addresses[13] <= 5'h0d;
+        addresses[12] <= 5'h0e;
+        addresses[11] <= 5'h0d;
+        addresses[10] <= 5'h0e;
+        addresses[9] <= 5'h0d;
+        addresses[8] <= 5'h0e;
+        addresses[7] <= 5'h0d;
+        addresses[6] <= 5'h0e;
+        addresses[5] <= 5'h0d;
+        addresses[4] <= 5'h0e;
+        addresses[3] <= 5'h0d;
+        addresses[2] <= 5'h0e;
+        addresses[1] <= 0;
+        addresses[0] <= 31; 
+      end
+      word_no <= 5'd0;
+    end
+    else //!ready
+      rd_request <= 0;
+  end
+
+  else if (init_request) begin
+    init_required <= 1'b1;
+  end
   
-  if (ready)
+  else if (ready) begin
     case (state)
       READING: begin
-        if (word_no[0]) begin
-          is_9031 <= !(rd_data[5:4] == 2'b01);
-        end else begin
-          speed <= rd_data[6:5];
-          duplex <= rd_data[3];
-        end
+        speed <= rd_data[6:5];
+        duplex <= rd_data[3];
         
-        if (init_required & word_no[0]) begin
+        if (init_required) begin
           wr_request <= 1'b1;
-          if (rd_data[5:4] == 2'b01) word_no <= 3'h7;
-          else word_no <= 3'h3;
+          word_no <= (phychip[0]) ? 5'd8 : 5'd18;
           state <= WRITING;
           init_required <= 1'b0;
         end else begin
+          word_no <= 5'd0;
           rd_request <= 1'b1;
-          word_no <= {2'b00,~word_no[0]};
           state <= READING;
         end
       end
 
       WRITING: begin
-        if (word_no == 3'h2) state <= READING;
+        if (word_no == 5'd1) state <= READING;
         else wr_request <= 1'b1;
-        word_no <= word_no - 3'h1;		  
+        word_no <= word_no - 5'd1;		  
       end
     endcase
 		
+  end
   else begin //!ready
-    rd_request <= 0;
-    wr_request <= 0;
+    rd_request <= 1'b0;
+    wr_request <= 1'b0;
   end
 end
 

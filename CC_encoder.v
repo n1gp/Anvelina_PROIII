@@ -11,7 +11,7 @@ Format changed to match Protocol Discussion paper 5 Dec 2014
 				1	Seq #							[23:16]
 				2	Seq #							[15:8]
 				3	Seq #							[7:0]
-			0	4	Bits - PTT, Dot, Dash	[0] = PTT, [1] = Dot, [2] = Dash, [3] = new_frequency, [4] = locked_10MHz
+			0	4	Bits - PTT, Dot, Dash	[0] = PTT, [1] = Dot, [2] = Dash, [3] = new_frequency, [4] = locked_10MHz [7] = keyout
 			1	5	Bits - ADC Overload		[0] = ADC0…[7] = ADC7
 			2	6	Exciter Power 0			[15:8]
 			3	7	Exciter Power 0			[7:0]
@@ -70,6 +70,7 @@ module CC_encoder (
 							input PTT,
 							input Dot,
 							input Dash,
+							input keyout,
 							//input frequency_change[0:NR-1], 
 							input locked_10MHz,
 							input ADC0_overload,
@@ -92,16 +93,15 @@ module CC_encoder (
 							
 							);
 							
-parameter [7:0] update_rate = 200; 					// number of mS between updates if no change in data	
-parameter NR;
 
+parameter [24:0] update_rate = 25'd200; 					// number of mS between updates if no change in data	
 // move all C&C data to tx_clock domain
 
+reg ADC0_overload_send;
+reg ADC1_overload_send;
 reg [7:0] memory[0:56];    // 57 by 8 bit ram
 reg [7:0] temp[0:56];
-reg [7:0] previous[0:2];
-//reg new_frequency;
-reg [$clog2(NR)-1:0] x;
+reg [7:0] previous[0:1];
 
 // initial clear of all RAM
 reg [6:0] t;
@@ -112,15 +112,19 @@ begin
 	temp[t]   = 8'd0;
 end
 	
+//parameter NR;
+//reg new_frequency;
+//reg [$clog2(NR)-1:0] x;
+
 always @ (posedge clock)
 begin 
-
 // frequency_change isn't currently being used
 //	if (NR > 1) new_frequency <= frequency_change[0] || frequency_change[1]; 
 //	else new_frequency <= frequency_change[0]; // this is from Rx clock domain!!
 
-	{memory[0],    temp[0]}  <=  {temp[0],  3'b0, locked_10MHz, 1'b0 /*new_frequency*/, Dash, Dot, PTT};  // sent in real time
-	{memory[1],    temp[1]}  <=  {temp[1],  6'b0, ADC1_overload, ADC0_overload};
+	{memory[0],    temp[0]}  <=  {temp[0],  keyout, 2'b0, locked_10MHz, 1'b0 /*new_frequency*/, Dash, Dot, PTT};  // sent in real time
+	//isolate memory[1] / overload bits, so they don't get overwritten during send
+//	{memory[1],    temp[1]}  <=  {temp[1],  6'b0, ADC1_overload_send, ADC0_overload_send};
 	{memory[2],    temp[2]}  <=  {temp[2],  Exciter_power[15:8]};
 	{memory[3],    temp[3]}	 <=  {temp[3],  Exciter_power[7:0]};		
 	{memory[10],  temp[10]}  <= {temp[10],  FWD_power[15:8]};
@@ -152,20 +156,24 @@ end
 // set ready flag when C&C data changes. Clear flag when ACK received
 
 
-reg [2:0]  state = 0;
+reg [1:0]  state = 0;
 reg [5:0]  count = 0;
 reg [24:0] counter = 0;
-reg [7:0]  rate;
+reg [24:0]  rate;
 
-assign rate = FPGA_PTT ? 8'd1 : update_rate;   // if Txing then use 1mS update rate
+assign rate = FPGA_PTT ? 25'd1 : update_rate;   // if Txing then use 1mS update rate
 
 always @ (posedge clock)	
 begin
-	if (counter >= (rate * 125000)) begin	
+	if (counter >= (rate * 25'd125000)) begin	
 		counter <= 25'd0;
 		if (state == 0) state <= 1;	  // no need to send data if its already in progress	
 	end
 	else counter <= counter + 25'd1;
+
+	// latch in ADC* OL-ON condition, it may get cleared after packet is sent
+	if (ADC0_overload) ADC0_overload_send <= 1'b1;
+	if (ADC1_overload) ADC1_overload_send <= 1'b1;
 
 	case(state)	
 	0: begin 
@@ -179,17 +187,21 @@ begin
 				state <= 1;
 			end
 			else
-				for (count = 0; count < 6'd56; count = count + 6'd1) // update all status (56 bytes)
-				CC_data[count] <= memory[count];
+				for (count = 6'd0; count < 6'd56; count = count + 6'd1) // update all status (56 bytes)
+				if (count != 6'd1) CC_data[count] <= memory[count]; // skip overload bits
 		end 
 		
 	1: begin 
+			// send latched overloads
+			CC_data[1]  <=  {6'b0, ADC1_overload_send, ADC0_overload_send};
 			ready <= 1'b1;
 			if (ACK) begin 
+				ADC0_overload_send <= ADC0_overload;
+				ADC1_overload_send <= ADC1_overload;
+				pk_detect_reset <= 1'b1;	// signal Orion_ADC to begin new pk detect interval
 				counter <= 25'd0;
 				count <= 6'b0;
 				ready <= 1'b0;
-				pk_detect_reset <= 1'b1;		// signal Orion_ADC to begin new pk detect interval
 				state <= 0;
 			end
 			if (pk_detect_ack) pk_detect_reset <= 1'b0;  // clear pk detect reset once Orion_ADC receives interval reset signal

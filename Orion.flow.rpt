@@ -1,6 +1,6 @@
 Flow report for Orion
-Sun Sep 29 13:49:49 2024
-Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
+Tue Mar  4 16:05:54 2025
+Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
 
 
 ---------------------
@@ -21,7 +21,7 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 ----------------
 ; Legal Notice ;
 ----------------
-Copyright (C) 2019  Intel Corporation. All rights reserved.
+Copyright (C) 2020  Intel Corporation. All rights reserved.
 Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and any partner logic 
 functions, and any output files from any of the foregoing 
@@ -41,22 +41,22 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Flow Summary                                                                     ;
 +------------------------------------+---------------------------------------------+
-; Flow Status                        ; Successful - Sun Sep 29 13:49:16 2024       ;
-; Quartus Prime Version              ; 19.1.0 Build 670 09/22/2019 SJ Lite Edition ;
+; Flow Status                        ; Successful - Tue Mar  4 16:05:53 2025       ;
+; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
 ; Revision Name                      ; Orion                                       ;
 ; Top-level Entity Name              ; Orion                                       ;
 ; Family                             ; Cyclone IV E                                ;
 ; Device                             ; EP4CE115F29I7                               ;
 ; Timing Models                      ; Final                                       ;
-; Total logic elements               ; 92,619 / 114,480 ( 81 % )                   ;
-;     Total combinational functions  ; 71,660 / 114,480 ( 63 % )                   ;
-;     Dedicated logic registers      ; 74,916 / 114,480 ( 65 % )                   ;
-; Total registers                    ; 74926                                       ;
-; Total pins                         ; 169 / 529 ( 32 % )                          ;
+; Total logic elements               ; 97,358                                      ;
+;     Total combinational functions  ; 71,693                                      ;
+;     Dedicated logic registers      ; 77,255                                      ;
+; Total registers                    ; 77265                                       ;
+; Total pins                         ; 169                                         ;
 ; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 1,226,400 / 3,981,312 ( 31 % )              ;
-; Embedded Multiplier 9-bit elements ; 298 / 532 ( 56 % )                          ;
-; Total PLLs                         ; 4 / 4 ( 100 % )                             ;
+; Total memory bits                  ; 1,226,400                                   ;
+; Embedded Multiplier 9-bit elements ; 298                                         ;
+; Total PLLs                         ; 4                                           ;
 +------------------------------------+---------------------------------------------+
 
 
@@ -65,7 +65,7 @@ https://fpgasoftware.intel.com/eula.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 09/29/2024 13:34:32 ;
+; Start date & time ; 03/04/2025 16:02:04 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; Orion               ;
 +-------------------+---------------------+
@@ -80,7 +80,7 @@ https://fpgasoftware.intel.com/eula.
 ; ALLOW_POWER_UP_DONT_CARE                ; Off                                    ; On                 ; --          ; --         ;
 ; ALLOW_REGISTER_RETIMING                 ; Off                                    ; On                 ; --          ; --         ;
 ; AUTO_MERGE_PLLS                         ; Off                                    ; On                 ; --          ; --         ;
-; COMPILER_SIGNATURE_ID                   ; 4681966034259.172760607221324          ; --                 ; --          ; --         ;
+; COMPILER_SIGNATURE_ID                   ; 26601950300764.174112212404488         ; --                 ; --          ; --         ;
 ; FITTER_AUTO_EFFORT_DESIRED_SLACK_MARGIN ; 1 ns                                   ; 0 ns               ; --          ; --         ;
 ; MAX_CORE_JUNCTION_TEMP                  ; 100                                    ; --                 ; --          ; --         ;
 ; MIN_CORE_JUNCTION_TEMP                  ; -40                                    ; --                 ; --          ; --         ;
@@ -120,33 +120,24 @@ https://fpgasoftware.intel.com/eula.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:02:53     ; 1.1                     ; 5777 MB             ; 00:03:04                           ;
-; Fitter               ; 00:11:07     ; 1.6                     ; 8737 MB             ; 00:59:49                           ;
-; Assembler            ; 00:00:19     ; 1.3                     ; 5607 MB             ; 00:00:20                           ;
-; Timing Analyzer      ; 00:00:30     ; 2.3                     ; 6015 MB             ; 00:00:57                           ;
-; Total                ; 00:14:49     ; --                      ; --                  ; 01:04:10                           ;
+; Analysis & Synthesis ; 00:03:34     ; 1.1                     ; 1633 MB             ; 00:03:52                           ;
+; Total                ; 00:03:34     ; --                      ; --                  ; 00:03:52                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 
-+------------------------------------------------------------------------------------+
-; Flow OS Summary                                                                    ;
-+----------------------+------------------+------------+------------+----------------+
-; Module Name          ; Machine Hostname ; OS Name    ; OS Version ; Processor type ;
-+----------------------+------------------+------------+------------+----------------+
-; Analysis & Synthesis ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
-; Fitter               ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
-; Assembler            ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
-; Timing Analyzer      ; DESKTOP-9D7J9KI  ; Windows 10 ; 10.0       ; x86_64         ;
-+----------------------+------------------+------------+------------+----------------+
++------------------------------------------------------------------------------------------+
+; Flow OS Summary                                                                          ;
++----------------------+------------------+------------------+------------+----------------+
+; Module Name          ; Machine Hostname ; OS Name          ; OS Version ; Processor type ;
++----------------------+------------------+------------------+------------+----------------+
+; Analysis & Synthesis ; n1gp             ; Debian GNU/Linux ; 12         ; x86_64         ;
++----------------------+------------------+------------------+------------+----------------+
 
 
 ------------
 ; Flow Log ;
 ------------
 quartus_map --read_settings_files=on --write_settings_files=off Orion -c Orion
-quartus_fit --read_settings_files=off --write_settings_files=off Orion -c Orion
-quartus_asm --read_settings_files=off --write_settings_files=off Orion -c Orion
-quartus_sta Orion -c Orion
 
 
 

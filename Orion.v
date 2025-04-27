@@ -595,6 +595,13 @@
                        message telling us to switch the ANT when we are already in TX mode sending RF.
                        The client program should send this before going to TX.
 
+2025	Feb 15 - (N1GP) Added keyout to bit 7 of CC_encoder data byte 0. This can be used to
+                        generate a sidetone on the client software. Also now latching ADC0 & ADC1 overload
+			so if it happens only once it gets sent in CC_encoder. CC_encoder was sending
+			every 50ms, now every 200ms unless PTT or realtime events.
+
+2025    Mar 12 - (N1GP) Added timings in phy_cfg.v to better support KSZ_9031 phy.
+
 */
 
 module Orion(
@@ -815,8 +822,8 @@ parameter IF_TPD  = 2;
 
 localparam board_type = 8'h05;		  	// 00 for Metis, 01 for Hermes, 02 for Griffin, 03 for Angelia, and 05 for Orion
 parameter  Orion_version = 8'd22;			// FPGA code version
-parameter  beta_version = 8'd4;	// Should be 0 for official release
-parameter  protocol_version = 8'd43;	// openHPSDR protocol version implemented
+parameter  beta_version = 8'd6;	// Should be 0 for official release
+parameter  protocol_version = 8'd44;	// openHPSDR protocol version implemented
 
 //--------------------------------------------------------------
 // Reset Lines - C122_rst, IF_rst, SPI_Alex_reset
@@ -2135,13 +2142,14 @@ assign ALL_sequence_errors = HP_sequence_errors + Audio_sequence_errors + DUC_se
 
 cdc_sync #(32)cdc_sync_ALL (.siga(ALL_sequence_errors), .rstb(1'b0), .clkb(tx_clock), .sigb(ALL_sequence_errors_tx));
 
-CC_encoder #(50, NR) CC_encoder_inst (				// 50mS update rate
+CC_encoder #(NR) CC_encoder_inst (				// 50mS update rate
 					//	inputs
 					.clock(tx_clock),					// tx_clock  125MHz
 					.ACK (CC_ack),
 					.PTT ((break_in & CW_PTT) | debounce_PTT),
 					.Dot (debounce_DOT),
 					.Dash(debounce_DASH),
+					.keyout(keyout & run),
 					//.frequency_change(frequency_change),
 					.locked_10MHz(locked_10MHz),		// set if the 10MHz divider PLL is locked.
 					.ADC0_overload (OVERFLOW),
@@ -2155,7 +2163,8 @@ CC_encoder #(50, NR) CC_encoder_inst (				// 50mS update rate
 					.User_IO ({3'b0, IO2, debounce_IO8, IO6, debounce_IO5, IO4}),
 					.pk_detect_ack(pk_detect_ack),		// from Orion_ADC
 					.FPGA_PTT(FPGA_PTT),						// when set change update rate to 1mS
-					.Debug_data(16'd0),
+					.Debug_data({14'd0, keyout, is_9031}),
+					//.Debug_data(16'd0),
 					//.Debug_data({6'b000000,~DEBUG_LED10,~DEBUG_LED9,~DEBUG_LED8,~DEBUG_LED7,~DEBUG_LED6,~DEBUG_LED5,~DEBUG_LED4,~DEBUG_LED3,~DEBUG_LED2,~DEBUG_LED1}),
 					.sequence_errors(ALL_sequence_errors_tx),
 							
