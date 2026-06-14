@@ -16,7 +16,7 @@ reg [SIZE-1:0] q1;
 always @(posedge clkb)
 begin
   if (rstb)
-    {sigb,q1} <= 2'b00;
+    {sigb,q1} <= {2*SIZE{1'b0}}; //eu2av
   else if (strobe)
     {sigb,q1} <= {q1,siga};
 end

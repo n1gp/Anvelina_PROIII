@@ -26,6 +26,40 @@
 
 // (C) Phil Harman VK6APH/VK6PH, Kirk Weedman KD7IRS  2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015
 
+//=============================================================================
+// REVISION HISTORY - Anvelina PRO III (Orion MK2)
+//=============================================================================
+// Yurij eu2av - 2026-06-09
+// - Updated ASMI IP device family from Cyclone IV GX to Cyclone IV E
+//   (fixes Warning 169180 clamping diode on internal DATA0 pin)
+// Yurij eu2av - 2026-06-09
+// - Added pipeline register C122_cordic_i_out_pipe on _122_90 clock to break
+//   critical cross-clock path from CORDIC (C122_clk) to temp_DACD.
+//   Improves setup slack for PLL_IF.c0 (122.88 MHz DAC) domain.
+// Yurij eu2av - 2026-06-09
+// - PSA switching stability fixes:
+//   * Added cold-boot qualification: ps = C122_run ? (C122_RxADC[1]==2) : 0
+//     to prevent random PSA state at power-up before system sync.
+//   * Added 2-tap debounce (ps_d1/ps_d2) and sample-boundary switch in
+//     Rx_fifo_ctrl.v to prevent mid-sample phase jumps (later simplified
+//     to direct ps after confirming clean switching).
+//   * Restored sequence_errors counting in rx_clock domain with pipeline
+//     register expected_sequence_number in High_Priority_CC.v and
+//     Rx_specific_C&C.v; removed broken CDC to CBCLK (cdc_sync for 32-bit
+//     counters caused random glitches).
+//   * Replaced cdc_sync_ALL for sequence_errors sum with cdc_mcp handshake.
+// Yurij eu2av - 2026-06-09
+// - SDC audit fixes: LTC2208_122MHz_2 merged into same clock group (both ADCs
+//   share same source via dual-channel driver). Removed false_path between them.
+// - Updated ASMI constraint names (sd2~ -> cycloneii_asmiblock2~) and restored.
+// - Relaxed set_max_delay CMCLK->_122_90 from 4ns to 8ns.
+// - Added temp_Tx0_frequency pipeline register in High_Priority_CC.v to break
+//   critical path udp_recv|to_port -> Tx0_frequency.
+// - Restored != 16'd0 check in Rx_specific_C&C.v for RxSampleRate with
+//   pipeline register expected_sequence_number to keep timing clean.
+// - Added to_port_pipe pipeline register in High_Priority_CC.v to break
+//   critical path from udp_recv|to_port to temp_Rx_frequency/temp_Tx0_frequency.
+//=============================================================================
 
 /*
 	2013 Dec 24 - Start coding 
@@ -784,9 +818,9 @@ module Orion(
   //output wire RAM_A2,
   //output wire RAM_A3,
   //output wire RAM_A4,
-  //output wire RAM_A5,
+  output wire RAM_A5
   //output wire RAM_A6,
-  output wire RAM_A7
+  //output wire RAM_A7
   //output wire RAM_A8,
   //output wire RAM_A9,
   //output wire RAM_A10,
@@ -794,6 +828,14 @@ module Orion(
   //output wire RAM_A12,
   //output wire RAM_A13  
 );
+
+// Refactored by Yurij eu2av: named constants for repeated magic numbers
+localparam OFFSET_BINARY_HALF   = 16'd32768;
+localparam FULLSCALE_16BIT      = 17'd65536;
+localparam CLIP_MAX_17BIT       = 17'd65535;
+localparam FIFO_READY_THRESHOLD = 12'd2047;
+localparam LED_MAX_POSN         = 5'h13;
+localparam HW_TIMEOUT_COUNT     = 28'd250_000_000;
 
 assign USEROUT0 = run ? Open_Collector[1] : 1'b0;					
 assign USEROUT1 = run ? Open_Collector[2] : 1'b0;   				
@@ -807,14 +849,14 @@ assign USEROUT8 = run ? Open_Collector_Anvelina_DX[2] : 1'b0;
 assign USEROUT9 = run ? Open_Collector_Anvelina_DX[3] : 1'b0;
 assign USEROUT10 = run ? Open_Collector_Anvelina_DX[4] : 1'b0;    
 
-assign RAM_A0  = 0;
+assign RAM_A0  = fifo_ready[0]; // Yurij eu2av: debug tap - Rx0 FIFO ready (was tied to 0)
 //assign RAM_A1  = 0;
 //assign RAM_A2  = 0;
 //assign RAM_A3  = 0;
 //assign RAM_A4  = 0;
-//assign RAM_A5  = 0;
+assign RAM_A5  = FPGA_PTT; // Yurij eu2av: debug tap - PTT state (was tied to 0)
 //assign RAM_A6  = 0;
-assign RAM_A7  = 0;
+//assign RAM_A7  = 0;
 //assign RAM_A8  = 0;
 //assign RAM_A9  = 0;
 //assign RAM_A10  = 0;
@@ -848,7 +890,7 @@ parameter IF_TPD  = 2;
 
 localparam board_type = 8'h05;		  	// 00 for Metis, 01 for Hermes, 02 for Griffin, 03 for Angelia, and 05 for Orion
 parameter  Orion_version = 8'd22;			// FPGA code version
-parameter  beta_version = 8'd11;	// Should be 0 for official release
+parameter  beta_version = 8'd13;	// Should be 0 for official release
 parameter  protocol_version = 8'd44;	// openHPSDR protocol version implemented
 
 //--------------------------------------------------------------
@@ -884,13 +926,13 @@ always @ (posedge rx_clock)
 begin
 	if (HW_timer_enable) begin
 		if (timer_reset) sec_count <= 28'b0;
-		else if (sec_count < 28'd250_000_000) 	// approx 2 secs. 
+		else if (sec_count < HW_TIMEOUT_COUNT) 	// approx 2 secs. // Yurij eu2av
 			sec_count <= sec_count + 28'b1;
 	end
 	else sec_count <= 28'd0;
 end
 
- assign HW_timeout = (sec_count >= 28'd250_000_000) ? 1'd1 : 1'd0;
+ assign HW_timeout = (sec_count >= HW_TIMEOUT_COUNT) ? 1'd1 : 1'd0; // Yurij eu2av
 
 
 //---------------------------------------------------------
@@ -924,6 +966,8 @@ wire rx_clock;
 wire tx_clock;
 wire udp_rx_active;
 wire [7:0] udp_rx_data;
+wire udp_rx_active_pipe;
+wire [7:0] udp_rx_data_pipe;
 wire udp_tx_active;
 wire [47:0] local_mac;	
 wire broadcast;
@@ -957,7 +1001,9 @@ network network_inst (
   .tx_clock(tx_clock),
   .broadcast(broadcast),
   .udp_rx_active(udp_rx_active),
+  .udp_rx_active_pipe(udp_rx_active_pipe),
   .udp_rx_data(udp_rx_data),
+  .udp_rx_data_pipe(udp_rx_data_pipe),
   .udp_tx_length(udp_tx_length),
   .udp_tx_active(udp_tx_active),
   .local_mac(local_mac),
@@ -1014,8 +1060,8 @@ wire discovery_ACK_sync;
 sdr_receive sdr_receive_inst(
 	//inputs 
 	.rx_clock(rx_clock),
-	.udp_rx_data(udp_rx_data),
-	.udp_rx_active(udp_rx_active),
+	.udp_rx_data(udp_rx_data_pipe),
+	.udp_rx_active(udp_rx_active_pipe),
 	.sending_sync(sending_sync),
 	.broadcast(broadcast),
 	.erase_ACK(busy),						// set when erase is in progress
@@ -1062,9 +1108,9 @@ wire [15:0]sdr_send_port;
 wire [7:0]Mic_data;
 wire mic_fifo_rdreq;
 wire [8:0]Rx_data[0:NR-1];
-wire fifo_ready[0:NR-1];
+reg fifo_ready[0:NR-1]; // Yurij eu2av
 wire fifo_rdreq[0:NR-1];
-logic [15:0] checksum;
+reg [15:0] checksum; // Yurij eu2av
 
 sdr_send #(board_type, NR, master_clock, protocol_version) sdr_send_inst(
 	//inputs
@@ -1111,7 +1157,7 @@ sdr_send #(board_type, NR, master_clock, protocol_version) sdr_send_inst(
 	.CC_ack(CC_ack),							// ack to CC_encoder that send request received
 	.WB_ack(WB_ack),							// ack to WB controller that send request received	
 	.phy_ready(phy_ready),					// set when PHY is not sending DDC data
-	.discovery_ACK(discovery_ACK) 		// set to acknowlege discovery reply received
+	.discovery_ACK(discovery_ACK),		// set to acknowlege discovery reply received
 	 ); 		
 
 //---------------------------------------------------------
@@ -1135,10 +1181,11 @@ genvar j;
 for (j = 0 ; j < NR; j++)
 	begin:q
 
+		// Refactored by Yurij eu2av: combinational logic must use blocking assignments
 		always @ (*)
 		begin 
-			samples_per_frame[j] <= 16'd238;
-			tx_length[j] <= 16'd1444;
+			samples_per_frame[j] = 16'd238;
+			tx_length[j] = 16'd1444;
 	   end 
 	end
 
@@ -1202,11 +1249,14 @@ cdc_sync #(8) C122_EnableRx0_7_sync  (.siga(EnableRx0_7), .rstb(C122_rst), .clkb
 		Rx_fifo_ctrl #(NR) Rx0_fifo_ctrl_inst( .reset(!C122_run || !C122_EnableRx0_7[0] ), .clock(C122_clk), .data_in_I(rx_I[1]), .data_in_Q(rx_Q[1]),
 							.spd_rdy(strobe[0]), .spd_rdy2(strobe[1]), .spd_rdy3(strobe[NR]), .fifo_full(Rx_fifo_full[0]), .data_in_IDAC(rx_I[NR]), .data_in_QDAC(rx_Q[NR]),
 							.wrenable(Rx_fifo_wreq[0]), .data_out(Rx_fifo_data[0]), .fifo_clear(Rx_fifo_clr[0]),
-							.Sync_data_in_I(rx_I[0]), .Sync_data_in_Q(rx_Q[0]), .Sync(C122_SyncRx[0][1]), .ps(C122_RxADC[1] == 8'd2));	
+							.Sync_data_in_I(rx_I[0]), .Sync_data_in_Q(rx_Q[0]), .Sync(C122_SyncRx[0][1]), .ps(C122_run ? (C122_RxADC[1] == 8'd2) : 1'b0) // Yurij eu2av: Cold boot PSA init fix
+							);
 
-		always @ (posedge tx_clock)    
-			fifo_ready[0] = (Rx_used[0] > 12'd2047) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
-			//fifo_ready[0] = (Rx_used[0] > 12'd1427) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
+		// Refactored by Yurij eu2av
+		always @ (posedge tx_clock) begin
+			fifo_ready[0] <= (Rx_used[0] > FIFO_READY_THRESHOLD) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC // Yurij eu2av
+			//fifo_ready[0] <= (Rx_used[0] > 12'd1427) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
+		end
 													
 // When Mux first set, inhibit fifo write then wait for PHY to be looking for more Rx0 data to ensure there is no data in transit.
 // Then reset fifo then wait for 48 to 8 converter to be looking for Rx0 DDC data at first byte. Then enable write to fifo again.
@@ -1230,9 +1280,11 @@ for (d = 1 ; d < NR; d++)
 							.wrenable(Rx_fifo_wreq[d]), .data_out(Rx_fifo_data[d]), .fifo_clear(Rx_fifo_clr[d]),
 							.Sync_data_in_I(rx_I[d]), .Sync_data_in_Q(rx_Q[d]), .Sync(1'b0));
 													
-		always @ (posedge tx_clock)    
-			fifo_ready[d] = (Rx_used[d] > 12'd2047) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
-			//fifo_ready[d] = (Rx_used[d] > 12'd1427) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
+		// Refactored by Yurij eu2av
+		always @ (posedge tx_clock) begin
+			fifo_ready[d] <= (Rx_used[d] > FIFO_READY_THRESHOLD) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC // Yurij eu2av
+			//fifo_ready[d] <= (Rx_used[d] > 12'd1427) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
+		end
 
 	end
 endgenerate
@@ -1414,10 +1466,16 @@ byte_to_32bits Audio_byte_to_32bits_inst
 			
 // select sidetone when CW key active and sidetone_level is not zero else Rx audio.
 reg [31:0] Rx_audio;
-wire [33:0] Mixed_audio;
-wire signed [31:0] Mixed_LR;
-wire signed [15:0] Mixed_side;
+reg [33:0] Mixed_audio; // Yurij eu2av: procedural assignment requires reg type
+reg signed [31:0] Mixed_LR; // Yurij eu2av: procedural assignment requires reg type
+reg signed [15:0] Mixed_side; // Yurij eu2av: procedural assignment requires reg type
 reg [5:0] Mix_count = 6'd0;
+wire signed [16:0] audio_L_temp; // Yurij eu2av
+wire signed [16:0] audio_R_temp; // Yurij eu2av
+
+// Refactored by Yurij eu2av: combinational derivation of signed audio samples
+assign audio_L_temp = Mixed_audio[33:17] - 17'd32768;
+assign audio_R_temp = Mixed_audio[16:0] - 17'd32768;
 
 // if break_in (QSK) mix in rx audio as well
 always @ (posedge CBCLK)    
@@ -1426,25 +1484,25 @@ begin
     case (Mix_count)
         56:
         begin
-            Mixed_side <= (prof_sidetone + 16'd32768) >> 1;
-            Mixed_LR[31:16] <= (LR_data[31:16] + 16'd32768) >> 1;
-            Mixed_LR[15:0] <= (LR_data[15:0] + 16'd32768) >> 1;
+            Mixed_side <= (prof_sidetone + OFFSET_BINARY_HALF) >> 1; // Yurij eu2av
+            Mixed_LR[31:16] <= (LR_data[31:16] + OFFSET_BINARY_HALF) >> 1; // Yurij eu2av
+            Mixed_LR[15:0] <= (LR_data[15:0] + OFFSET_BINARY_HALF) >> 1; // Yurij eu2av
         end
 
         58:
         begin
-            Mixed_audio[33:17] <= 16'((Mixed_LR[31:16] + Mixed_side) - (Mixed_LR[31:16] * Mixed_side / 17'd65536));  //eu2av - 06/05/2025/ - bug fixes
-            Mixed_audio[16:0]  <= 16'((Mixed_LR[15:0]  + Mixed_side) - (Mixed_LR[15:0]  * Mixed_side / 17'd65536));  //eu2av - 06/05/2025/ - bug fixes
+            Mixed_audio[33:17] <= 16'((Mixed_LR[31:16] + Mixed_side) - (Mixed_LR[31:16] * Mixed_side / FULLSCALE_16BIT));  //eu2av - 06/05/2025/ - bug fixes // Yurij eu2av
+            Mixed_audio[16:0]  <= 16'((Mixed_LR[15:0]  + Mixed_side) - (Mixed_LR[15:0]  * Mixed_side / FULLSCALE_16BIT));  //eu2av - 06/05/2025/ - bug fixes // Yurij eu2av
 			  //Mixed_audio[33:17] <= (Mixed_LR[31:16] + Mixed_side) - (Mixed_LR[31:16] * Mixed_side / 17'd65536);
            //Mixed_audio[16:0]  <= (Mixed_LR[15:0]  + Mixed_side) - (Mixed_LR[15:0]  * Mixed_side / 17'd65536);
         end
 
         60:
         begin
-            if (Mixed_audio[33:17] == 17'd65536)
-                Mixed_audio[33:17] <= 17'd65535;
-            if (Mixed_audio[16:0] == 17'd65536)
-                Mixed_audio[16:0] <= 17'd65535;
+            if (Mixed_audio[33:17] == FULLSCALE_16BIT) // Yurij eu2av
+                Mixed_audio[33:17] <= CLIP_MAX_17BIT; // Yurij eu2av
+            if (Mixed_audio[16:0] == FULLSCALE_16BIT) // Yurij eu2av
+                Mixed_audio[16:0] <= CLIP_MAX_17BIT; // Yurij eu2av
         end
 
         62:
@@ -1453,13 +1511,8 @@ begin
             begin
                 if (break_in)
                 begin
-                        // 1. In the module declaration section (among other regs):
-                    reg signed [16:0] audio_L_temp, audio_R_temp;  // [eu2av] for clean compilation
-                        // 2. Inside always @(posedge clock), in the audio block:
-                    audio_L_temp = Mixed_audio[33:17] - 17'd32768;
-                    audio_R_temp = Mixed_audio[16:0] - 17'd32768;
-                    Rx_audio[31:16] <= audio_L_temp[15:0];
-                    Rx_audio[15:0] <= audio_R_temp[15:0];
+                    Rx_audio[31:16] <= audio_L_temp[15:0]; // Yurij eu2av
+                    Rx_audio[15:0] <= audio_R_temp[15:0]; // Yurij eu2av
                 end
                 else
                     Rx_audio <= {prof_sidetone, prof_sidetone};
@@ -1467,6 +1520,7 @@ begin
             else
                 Rx_audio <= LR_data;
         end
+        default: ; // Yurij eu2av: explicit default for Mix_count case
     endcase
 end
 
@@ -1638,16 +1692,19 @@ reg        ps_round_bit;
 // Combinational logic to select the bit window (Barrel Shifter equivalent)
 always @(*) begin
     case (PS_SCALE)
-        3'd0: begin ps_slice = C122_cordic_i_out[21:8];  ps_round_bit = C122_cordic_i_out[7];  end
-        3'd1: begin ps_slice = C122_cordic_i_out[20:7];  ps_round_bit = C122_cordic_i_out[6];  end
-        3'd2: begin ps_slice = C122_cordic_i_out[19:6];  ps_round_bit = C122_cordic_i_out[5];  end
-        3'd3: begin ps_slice = C122_cordic_i_out[18:5];  ps_round_bit = C122_cordic_i_out[4];  end
-        3'd4: begin ps_slice = C122_cordic_i_out[17:4];  ps_round_bit = C122_cordic_i_out[3];  end
-        3'd5: begin ps_slice = C122_cordic_i_out[16:3];  ps_round_bit = C122_cordic_i_out[2];  end
-        3'd6: begin ps_slice = C122_cordic_i_out[15:2];  ps_round_bit = C122_cordic_i_out[1];  end
-        default: begin ps_slice = C122_cordic_i_out[21:8]; ps_round_bit = C122_cordic_i_out[7]; end
+        3'd0: begin ps_slice = C122_cordic_i_out_pipe[21:8];  ps_round_bit = C122_cordic_i_out_pipe[7];  end
+        3'd1: begin ps_slice = C122_cordic_i_out_pipe[20:7];  ps_round_bit = C122_cordic_i_out_pipe[6];  end
+        3'd2: begin ps_slice = C122_cordic_i_out_pipe[19:6];  ps_round_bit = C122_cordic_i_out_pipe[5];  end
+        3'd3: begin ps_slice = C122_cordic_i_out_pipe[18:5];  ps_round_bit = C122_cordic_i_out_pipe[4];  end
+        3'd4: begin ps_slice = C122_cordic_i_out_pipe[17:4];  ps_round_bit = C122_cordic_i_out_pipe[3];  end
+        3'd5: begin ps_slice = C122_cordic_i_out_pipe[16:3];  ps_round_bit = C122_cordic_i_out_pipe[2];  end
+        3'd6: begin ps_slice = C122_cordic_i_out_pipe[15:2];  ps_round_bit = C122_cordic_i_out_pipe[1];  end
+        default: begin ps_slice = C122_cordic_i_out_pipe[21:8]; ps_round_bit = C122_cordic_i_out_pipe[7]; end
     endcase
 end
+
+always @ (posedge _122_90)
+    C122_cordic_i_out_pipe <= C122_cordic_i_out;
 
 always @ (posedge _122_90) begin
     // Apply rounding and form 16-bit output
@@ -1672,7 +1729,23 @@ begin
    end
    else temp_ADC[1] <= INA_2;
 
-end 
+end
+
+//==============================================================================
+// eu2av - [1.2] TPDF Dither insertion
+//==============================================================================
+wire signed [15:0] adc_dithered[0:1];
+
+tPDF_dither dither_adc0(
+   .clock(C122_clk), .reset(C122_rst),
+   .in_data(temp_ADC[0]), .out_data(adc_dithered[0])
+);
+
+//==============================================================================
+tPDF_dither dither_adc1(
+   .clock(C122_clk), .reset(C122_rst),
+   .in_data(temp_ADC[1]), .out_data(adc_dithered[1])
+);
 
 reg [15:0] ADC0_unsigned, ADC1_unsigned; // take ADC data AFTER the de-RANDOMIZER
 reg [15:0] ADC0_mag, ADC1_mag;
@@ -1873,6 +1946,7 @@ CicInterpM5 #(.RRRR(640), .IBITS(24), .OBITS(17), .GBITS(38)) in2 (C122_clk, 1'd
 // overall cordic gain is Sqrt(2)*1.647 = 2.33 
 
 wire signed [21:0] C122_cordic_i_out; 		//22		// 21 = use 22 bit output from CORDIC to allow for gain
+reg  signed [21:0] C122_cordic_i_out_pipe;
 wire signed [31:0] C122_phase_word_Tx;
 
 wire signed [16:0] I;
@@ -1907,7 +1981,7 @@ cpl_cordic # (.IN_WIDTH(17))
 
 always @ (posedge _122_90)
 begin
- 	   DACD <= debounce_IO5 ? (16'd32768 + temp_DACD) : 16'b0; 				// convert to 16-bit offset binary format and assign to DACD
+ 	   DACD <= debounce_IO5 ? (OFFSET_BINARY_HALF + temp_DACD) : 16'b0; 				// convert to 16-bit offset binary format and assign to DACD // Yurij eu2av
 		//DACD <= {C122_cordic_i_out[22], ~C122_cordic_i_out[21:7]};  // convert top 16-bits to offset binary for TxDAC
 end
 
@@ -1926,7 +2000,9 @@ end
 // select Tx attenuator parallel load mode
 
 assign TX_ATTN_LE = 1'b1;
-assign TX_ATTN_MODE = 0;
+assign TX_ATTN_MODE = 1'b0;
+assign TX_ATTN_CLK  = 1'b0;   // eu2av Added: explicitly suppress the unused clock cycle.
+assign TX_ATTN_DATA = 1'b0;   // eu2av Added: explicitly clearing unused data
 
 wire [7:0] Drive_PWM;
 
@@ -2081,8 +2157,8 @@ General_CC #(1024) General_CC_inst // parameter is port number  ***** this data 
 				// inputs
 				.clock(rx_clock),
 				.to_port(to_port),
-				.udp_rx_active(udp_rx_active),
-				.udp_rx_data(udp_rx_data),
+				.udp_rx_active(udp_rx_active_pipe),
+				.udp_rx_data(udp_rx_data_pipe),
 				// outputs
 			   .Rx_Specific_port(Rx_Specific_port),
 				.Tx_Specific_port(Tx_Specific_port),
@@ -2119,8 +2195,8 @@ High_Priority_CC #(NR) High_Priority_CC_inst  // default port is 1027 ***** this
 				// inputs
 				.clock(rx_clock),
 				.to_port(to_port),
-				.udp_rx_active(udp_rx_active),
-				.udp_rx_data(udp_rx_data),
+				.udp_rx_active(udp_rx_active_pipe),
+				.udp_rx_data(udp_rx_data_pipe),
 				.HW_timeout(HW_timeout),					// used to clear run if HW timeout.
 				.High_Priority_from_PC_port(High_Priority_from_PC_port),
 				// outputs
@@ -2177,8 +2253,8 @@ Tx_specific_CC Tx_specific_CC_inst //   // default port number is 1026 ***** thi
 				// inputs
 				.clock (rx_clock),
 				.to_port (to_port),
-				.udp_rx_active (udp_rx_active),
-				.udp_rx_data (udp_rx_data),
+				.udp_rx_active (udp_rx_active_pipe),
+				.udp_rx_data (udp_rx_data_pipe),
 				.Tx_Specific_port (Tx_Specific_port),
 				// outputs
 				.EER() ,
@@ -2214,8 +2290,8 @@ Rx_specific_CC #(NR) Rx_specific_CC_inst // default port number is 1025
 				.clock(rx_clock),
 				.Rx_Specific_port(Rx_Specific_port),
 				.to_port(to_port),
-				.udp_rx_active(udp_rx_active),
-				.udp_rx_data(udp_rx_data),
+				.udp_rx_active(udp_rx_active_pipe),
+				.udp_rx_data(udp_rx_data_pipe),
 				.run(run),
 				// outputs
 				.dither(dither),
@@ -2276,7 +2352,27 @@ reg [31:0] ALL_sequence_errors_tx;
 
 assign ALL_sequence_errors = HP_sequence_errors + Audio_sequence_errors + DUC_sequence_errors + Rx_spec_sequence_errors;
 
-cdc_sync #(32)cdc_sync_ALL (.siga(ALL_sequence_errors), .rstb(1'b0), .clkb(tx_clock), .sigb(ALL_sequence_errors_tx));
+// CDC via cdc_mcp: sample ALL_sequence_errors every 1024 rx_clock cycles (~8us) for glitch-free transfer
+reg [31:0] ALL_sequence_errors_reg;
+reg [9:0]  seq_err_sample_cnt;
+
+always @(posedge rx_clock) begin
+	ALL_sequence_errors_reg <= ALL_sequence_errors;
+	seq_err_sample_cnt <= seq_err_sample_cnt + 1'b1;
+end
+
+wire seq_err_sample_tick = (seq_err_sample_cnt == 10'd0);
+
+cdc_mcp #(32) cdc_seq_err (
+	.a_rst(1'b0),
+	.a_clk(rx_clock),
+	.a_data(ALL_sequence_errors_reg),
+	.a_data_rdy(seq_err_sample_tick),
+	.b_rst(1'b0),
+	.b_clk(tx_clock),
+	.b_data(ALL_sequence_errors_tx),
+	.b_data_ack()
+);
 
 CC_encoder CC_encoder_inst (	// 200mS update rate unless Tx or overflows, then 1mS
 					//	inputs
@@ -2417,7 +2513,7 @@ assign i_clk = HB_counter[23];
 
 reg	[4:0]	led_posn;
 	always @(posedge i_clk)
-		led_posn <= (led_posn == 5'h13) ? 5'h0 : led_posn + 1'b1;
+		led_posn <= (led_posn == LED_MAX_POSN) ? 5'h0 : led_posn + 1'b1; // Yurij eu2av
 
 always @(posedge i_clk)
 	begin
@@ -2440,7 +2536,7 @@ always @(posedge i_clk)
 		DEBUG_LED17 <= ~(led_posn == 5'h10);
 		DEBUG_LED18 <= ~(led_posn == 5'h11);
 		DEBUG_LED19 <= ~(led_posn == 5'h12);
-		DEBUG_LED20 <= ~(led_posn == 5'h13);
+		DEBUG_LED20 <= ~(led_posn == LED_MAX_POSN); // Yurij eu2av
 	end
 
 `else
@@ -2461,6 +2557,36 @@ always @(posedge i_clk)
 // flash LED4 for ~0.2 seconds whenever traffic to the boards MAC address is received 
 //Led_flash Flash_LED4(.clock(CMCLK), .signal(network_status[0]), .LED(DEBUG_LED4), .period(half_second));
 //Led_flash Flash_LED4(.clock(rx_clock), .signal(G_CC_seq_err), .LED(DEBUG_LED4), .period(fast_clock_half_second));
+// Refactored by Yurij eu2av: registered debug LED indicators (DEBUG_LED3..6)
+reg debug_led3_reg;
+reg debug_led4_reg;
+// PC connection watchdog (~2s timeout @ 125MHz) // Yurij eu2av
+reg pc_link_alive;
+reg [27:0] pc_link_counter;
+
+always @(posedge rx_clock) begin
+    if (udp_rx_active) begin
+        pc_link_counter <= 28'd0;
+        pc_link_alive <= 1'b1;
+    end else if (pc_link_counter < 28'd250_000_000) begin
+        pc_link_counter <= pc_link_counter + 1'b1;
+    end else begin
+        pc_link_alive <= 1'b0;
+    end
+end
+
+always @(posedge tx_clock) begin
+    debug_led3_reg <= fifo_ready[0];  // Rx0 FIFO ready
+    debug_led4_reg <= pc_link_alive;  // Yurij eu2av: PC connection status (was FPGA_PTT)
+end
+
+// CBCLK activity blinker (~3Hz @ 3.072MHz)
+reg debug_led6_reg;
+reg [19:0] debug_led6_counter;
+always @(posedge CBCLK) begin
+    debug_led6_counter <= debug_led6_counter + 1'b1;
+    debug_led6_reg <= debug_led6_counter[19];
+end
 
 assign DEBUG_LED20 = 1'b1;
 assign DEBUG_LED19 = 1'b1;
@@ -2476,10 +2602,10 @@ assign DEBUG_LED10 = 1'b1;
 assign DEBUG_LED9 = 1'b1;
 assign DEBUG_LED8 = 1'b1;
 assign DEBUG_LED7 = 1'b1;
-assign DEBUG_LED6 = 1'b1;
-assign DEBUG_LED5 = 1'b1;
-assign DEBUG_LED4 = 1'b1;
-assign DEBUG_LED3 = 1'b1;
+assign DEBUG_LED6 = ~debug_led6_reg; // Yurij eu2av: CBCLK activity blink
+assign DEBUG_LED5 = 1'b1; // Yurij eu2av: sequence error LED logic removed (sum transferred via cdc_mcp); LED available for future use
+assign DEBUG_LED4 = ~debug_led4_reg; // Yurij eu2av: registered FPGA_PTT
+assign DEBUG_LED3 = ~debug_led3_reg; // Yurij eu2av: registered fifo_ready[0]
 assign DEBUG_LED2 = 1'b1;
 assign DEBUG_LED1 = 1'b1;
 

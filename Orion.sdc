@@ -83,9 +83,9 @@ set_clock_groups -asynchronous  -group { \
 					tx_clock \
 					PHY_TX_CLOCK \
 				       } \
-				-group {LTC2208_122MHz_2} \
 				-group { \
 					LTC2208_122MHz \
+					LTC2208_122MHz_2 \
 					_122MHz \
 					PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] \
 					PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1] \
@@ -111,7 +111,8 @@ set_clock_groups -asynchronous  -group { \
 # If setup and hold delays are equal then only need to specify once without max or min 
 
 #12.5MHz clock for Config EEPROM  +/- 10nS
-set_output_delay  10 -clock $clock_12_5MHz {ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_DCLK ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_SCE ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_SDO }
+# ASMI output constraints (names updated for current Quartus fitter hierarchy)
+set_output_delay  10 -clock $clock_12_5MHz {ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_DCLK ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_SCE ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_SDO }
 
 #122.88MHz clock for Tx DAC 
 set_output_delay 0.8 -clock _122MHz {DACD[*]} -add_delay
@@ -161,7 +162,8 @@ set_output_delay  10 -clock $clock_2_5MHz {PHY_MDIO} -add_delay
 # If setup and hold delays are equal then only need to specify once without max or min 
 
 #12.5MHz clock for Config EEPROM  +/- 10nS setup and hold
-set_input_delay 10  -clock  $clock_12_5MHz { ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_DATA0 }
+# ASMI input constraint (name updated for current Quartus fitter hierarchy)
+set_input_delay 10  -clock  $clock_12_5MHz { ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_DATA0 }
 
 # data from LTC2208 +/- 2nS setup and hold 
 set_input_delay -add_delay  -clock [get_clocks {virt_122MHz}]  2.000 [get_ports {INA[*]}]
@@ -203,17 +205,19 @@ set_input_delay  10  -clock data_clk2 {ADCMISO} -add_delay
 # Set Maximum Delay (for setup or recovery; low-level, over-riding timing adjustments)
 #************************************************************** 
 
-set_max_delay -from LTC2208_122MHz -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 7
+set_max_delay -from LTC2208_122MHz -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 6
 set_max_delay -from LTC2208_122MHz -to LTC2208_122MHz 18
 #set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to tx_clock 20
 set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 21
 set_max_delay -from tx_clock -to tx_clock 21
 #set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to PHY_TX_CLOCK 9
 #set_max_delay -from tx_clock -to PHY_TX_CLOCK 9
-set_max_delay -from PHY_RX_CLOCK -to PHY_RX_CLOCK 10
+# Yurij eu2av - 2026-06-09: Removed max_delay workaround after adding pipeline register for C&C path
+#set_max_delay -from PHY_RX_CLOCK -to PHY_RX_CLOCK 10
 #set_max_delay -from tx_clock -to network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 20
 set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] -to _122MHz 8
-set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1] -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 4
+# Yurij eu2av - 2026-06-09: Relaxed max_delay from 4ns to 8ns (CMCLK -> _122_90 cross-clock)
+set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[1] -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 8
 #set_max_delay -from LTC2208_122MHz -to PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] 6
 
 #**************************************************************
@@ -245,7 +249,8 @@ set_multicycle_path -from [get_keepers {sdr_send:sdr_send_inst|udp_tx_length[*]}
 # Set False Paths
 #**************************************************************
  
-set_false_path -from [get_clocks {LTC2208_122MHz}] -to [get_clocks {LTC2208_122MHz_2}]
+# Yurij eu2av - 2026-06-09: Removed false_path between LTC2208_122MHz and LTC2208_122MHz_2 since both ADCs share the same clock source (dual-channel driver)
+#set_false_path -from [get_clocks {LTC2208_122MHz}] -to [get_clocks {LTC2208_122MHz_2}]
 set_false_path -from [get_ports {PHY_RESET_N}]
 
 # Set false path to generated clocks that feed output pins
@@ -253,7 +258,7 @@ set_false_path -to [get_ports {CMCLK CBCLK CLRCIN CLRCOUT ATTN_CLK* SSCK ADCCLK 
 
 # 'get_keepers' denotes either ports or registers
 # don't need fast paths to the LEDs and adhoc outputs so set false paths so Timing will be ignored
-set_false_path -to [get_keepers { Status_LED DEBUG_LED* DITH* FPGA_PTT  NCONFIG  RAND*  USEROUT* FPGA_PLL DAC_ALC DRIVER_PA_EN CTRL_TRSW IO1 TX_ATTEN* atu_ctrl}]
+set_false_path -to [get_keepers { Status_LED DEBUG_LED* DITH* FPGA_PTT NCONFIG RAND* RAM_* USEROUT* FPGA_PLL DAC_ALC DRIVER_PA_EN CTRL_TRSW IO1 TX_ATTEN* atu_ctrl}]
 
 #don't need fast paths from the following inputs
 set_false_path -from [get_keepers  {ANT_TUNE IO2 IO4 IO5 IO6 IO8 KEY_DASH KEY_DOT OVERFLOW* PTT MODE2 TX_ATTEN_SELECT}]

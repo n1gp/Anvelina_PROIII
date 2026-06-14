@@ -121,7 +121,7 @@ generate
 	if(MIN_DECIMATION == MAX_DECIMATION) begin
 		assign out_data = comb_data[STAGES][ACC_WIDTH - 1 -: OUT_WIDTH] + comb_data[STAGES][ACC_WIDTH - OUT_WIDTH - 1];
 	end else begin
-		wire [$clog2(ACC_WIDTH)-1:0] msb [MAX_DECIMATION:MIN_DECIMATION];
+		wire [31:0] msb [MAX_DECIMATION:MIN_DECIMATION];
 		for(i = MIN_DECIMATION; i <= MAX_DECIMATION; i = i + 1) begin: round_position
 			assign msb[i] = IN_WIDTH + ($clog2(i) * STAGES) - 1 ;
 		end

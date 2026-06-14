@@ -47,15 +47,6 @@
 					 
 */
 
-//==============================================================================
-// Module: audio_I2S
-// Project: Anvelina ProIII DX (Orion-based firmware)
-// Author: eu2av
-// Description: I2S audio interface for TLV320AIC23B codec
-//              1. Fixed Warning 10230 via explicit 16-bit wires
-//              2. Restored Original FIFO Logic (safe threshold > 767)
-//              3. Hardware Output Mute extended to 60ms for complete click suppression
-//==============================================================================
 module audio_I2S 
 	( 
 		input [31:0]data_in,
@@ -77,46 +68,8 @@ reg [1:0] ramp_dir = 0; // 0=stay_down 1=stay_up 2=ramp_up 3=ramp_down
 reg holdoff;
 reg shift = 0;
 
-//==============================================================================
-// [eu2av] 1. Hardware Output Mute (60ms @ 48kHz = 3000 LRCLK cycles)
-// Forces data_out = 0 during startup to mask analog transients completely
-//==============================================================================
-reg [11:0] hw_mute_cnt;
-reg hw_mute_active;
-
-always @(posedge LRCLK) begin
-	if (!run) begin
-		hw_mute_cnt <= 12'd0;
-		hw_mute_active <= 1'b1; // Arm mute on stop
-	end
-	else if (hw_mute_active) begin
-		hw_mute_cnt <= hw_mute_cnt + 1'b1;
-		if (hw_mute_cnt == 12'd3000) hw_mute_active <= 1'b0; // Release after ~60ms
-	end
-end
-
-//==============================================================================
-// [eu2av] 2. 16-bit ramp arithmetic (module-level wires -> no Warning 10230)
-// Math is identical to original, only width promotion is prevented
-//==============================================================================
-wire [15:0] ramp_mag;            
-wire signed [15:0] ramp_signed_L; 
-wire signed [15:0] ramp_signed_R; 
-wire signed [15:0] diff_L, diff_R; 
-wire signed [15:0] out_L, out_R;   
-
-assign ramp_mag = (ramp_count << 7) - 16'd1;
-assign ramp_signed_L = data_in[31] ? $signed(ramp_mag) : -$signed(ramp_mag);
-assign ramp_signed_R = data_in[15] ? $signed(ramp_mag) : -$signed(ramp_mag);
-assign diff_L = $signed(data_in[31:16]) - ramp_signed_L;
-assign diff_R = $signed(data_in[15:0]) - ramp_signed_R;
-assign out_L = (data_in[30:16] > ramp_mag[14:0]) ? diff_L : 16'd0;
-assign out_R = (data_in[14:0] > ramp_mag[14:0]) ? diff_R : 16'd0;
-
-//==============================================================================
-// 3. Main ramp control logic (EXACT ORIGINAL STATE MACHINE)
-// Preserves the safe FIFO > 767 threshold that prevents crackling
-//==============================================================================
+// (N1GP) below is an attempt to prevent pops/clicks occurring as a result of
+// the audio fifo temporarily going empty, ramps are ~ 5.33ms
 always @ (posedge LRCLK)
 begin 
 	if (!run) begin
@@ -131,48 +84,52 @@ begin
 		ramp_count <= 15'd1;
 		data_in_tmp <= data_in;
 	end
-	// high water reached, start ramping back up (Original Safe Threshold)
+	// high water reached, start ramping back up
 	else if (rdusedw > 13'd767 && ramp_dir == 2'd0) begin
 		ramp_dir <= 2'd2;
-		ramp_count <= 15'd256; 
+		ramp_count <= 15'd256; // ramp time is 256/48000 or 5.33ms
 		data_in_tmp <= 32'd0;
 		holdoff <= 1'd0;
 	end
-	// ramp up
+	// ramp up, sample - (from 32767 to 255) * sign, or 0 if sample < ramp value
+	// note that if the sample is negative then it adds the ramp value
 	else if (ramp_dir == 2'd2) begin
-		data_in_tmp <= {out_L, out_R};
-		if (ramp_count == 15'd1) ramp_dir <= 2'd1; 
+		data_in_tmp <= {(data_in[30:16] > ((ramp_count<<7)-1)) ?
+			($signed(data_in[31:16]) - $signed(((ramp_count<<7)-1)*(data_in[31])?-1:1)) : 16'd0,
+				(data_in[14:0] > ((ramp_count<<7)-1)) ?
+			($signed(data_in[15:0]) - $signed(((ramp_count<<7)-1)*(data_in[15])?-1:1)) : 16'd0};
+		if (ramp_count == 15'd1) ramp_dir <= 1; // now stay even
 		ramp_count <= ramp_count - 15'd1;
 	end
-	// ramp down
+	// ramp down, sample - (from 255 to 32767) * sign, or 0 if sample < ramp value
 	else if (ramp_dir == 2'd3) begin
-		data_in_tmp <= {out_L, out_R};
+		data_in_tmp <= {(data_in[30:16] > ((ramp_count<<7)-1)) ?
+			($signed(data_in[31:16]) - $signed(((ramp_count<<7)-1)*(data_in[31])?-1:1)) : 16'd0,
+				(data_in[14:0] > ((ramp_count<<7)-1)) ?
+			($signed(data_in[15:0]) - $signed(((ramp_count<<7)-1)*(data_in[15])?-1:1)) : 16'd0};
 		if (ramp_count == 15'd256) begin
-			ramp_dir <= 2'd0; 
+			ramp_dir <= 0; // now stay quiet
 			holdoff <= 1'd1;
 		end
 		ramp_count <= ramp_count + 15'd1;
 	end
-	// stable states
-	else if (ramp_dir == 2'd0) data_in_tmp <= 32'd0; 
-	else data_in_tmp <= data_in; 
+	// things are stable at silent or even level playing
+	else if (ramp_dir == 2'd0) data_in_tmp <= 32'd0; // quiet
+	else data_in_tmp <= data_in; // even
 end
 
-//==============================================================================
-// 4. I2S serial output state machine (Unchanged)
-//==============================================================================
 always @ (posedge BCLK)
 begin 
-	if(!empty)
+	if(!empty)		// only run code if fifo has data available
 	begin
 		case (state)
 
 		0:	begin
-				if (LRCLK) state <= 1;
+				if (LRCLK) state <= 1;		// loop until LRCLK is high
 			end 
 			
 		1:  begin 
-				if (!LRCLK) begin
+				if (!LRCLK) begin 		// loop until LRCLK is low
 					shift <= 1;
 					data_count <= 5'd31;
 					state <= 2;
@@ -206,20 +163,18 @@ begin
 	end 
 end 
 
-// Serial output timing
+// clock data out on negedge of BCLK so it can be read on postive edge by TLV320	
+// request data just before falling edge of LRCLK 
 reg [5:0] get_count;		
 always @ (negedge BCLK)
 begin 
-	// [eu2av] HARDWARE MUTE: Force output to 0 for ~60ms after START
-	if (hw_mute_active) data_out <= 1'b0;
-	else if (shift) data_out <= data_in_tmp[data_count];
+		if (shift) data_out <= data_in_tmp[data_count];
 		else data_out <= 0;
 		if (!LRCLK) get_count <= 0;
 		else get_count <= get_count + 6'd1;
 end 
 			
-// Block get_data during mute to prevent FIFO underrun
-assign get_data = ((get_count == 6'd30) && !holdoff && !hw_mute_active);
+assign get_data = ((get_count == 6'd30) && !holdoff); // if holding off, let fifo fill up
 			
 			
 endmodule

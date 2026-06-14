@@ -11,21 +11,21 @@ entity datetime is
   -- Date information
   constant YEAR_INT  : integer                       := 2026;
   constant YEAR_HEX  : std_logic_vector(15 downto 0) := X"2026";
-  constant MONTH_INT : integer                       := 05;
-  constant MONTH_HEX : std_logic_vector(7 downto 0)  := X"05";
+  constant MONTH_INT : integer                       := 06;
+  constant MONTH_HEX : std_logic_vector(7 downto 0)  := X"06";
   constant DAY_INT   : integer                       := 11;
   constant DAY_HEX   : std_logic_vector(7 downto 0)  := X"11";
   constant DATE_HEX  : std_logic_vector(31 downto 0) := YEAR_HEX & MONTH_HEX & DAY_HEX;
   -- Time information
-  constant HOUR_INT   : integer                       := 15;
-  constant HOUR_HEX   : std_logic_vector(7 downto 0)  := X"15";
-  constant MINUTE_INT : integer                       := 19;
-  constant MINUTE_HEX : std_logic_vector(7 downto 0)  := X"19";
-  constant SECOND_INT : integer                       := 02;
-  constant SECOND_HEX : std_logic_vector(7 downto 0)  := X"02";
+  constant HOUR_INT   : integer                       := 09;
+  constant HOUR_HEX   : std_logic_vector(7 downto 0)  := X"09";
+  constant MINUTE_INT : integer                       := 45;
+  constant MINUTE_HEX : std_logic_vector(7 downto 0)  := X"45";
+  constant SECOND_INT : integer                       := 20;
+  constant SECOND_HEX : std_logic_vector(7 downto 0)  := X"20";
   constant TIME_HEX   : std_logic_vector(31 downto 0) := X"00" & HOUR_HEX & MINUTE_HEX & SECOND_HEX;
   -- Miscellaneous information
-  constant EPOCH_INT  : integer := 1778527142;  -- Seconds since 1970-01-01_00:00:00
+  constant EPOCH_INT  : integer := 1781185520;  -- Seconds since 1970-01-01_00:00:00
 
 
 end datetime;

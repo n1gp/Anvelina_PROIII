@@ -130,7 +130,7 @@ reg [7:0] port_index = 8'd0;
 reg send_response = 0;
 integer i;
 
-wire [7:0] number_Rx = NR;
+wire [7:0] number_Rx = NR[7:0]; //eu2av
 //wire [31:0] clock_frequency = master_clock;
 
 //reg [25:0] epoch_min; // multiply by 60 to get epoch seconds

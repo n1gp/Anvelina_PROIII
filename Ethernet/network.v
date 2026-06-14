@@ -88,8 +88,10 @@ module network (
 	output rx_clock,
 	output tx_clock,
 	output udp_rx_active,
+	output reg udp_rx_active_pipe,
 	output udp_tx_enable,
 	output [7:0] udp_rx_data,
+	output reg [7:0] udp_rx_data_pipe,
 	output udp_tx_active,
 	output [47:0] local_mac,
 	output broadcast,
@@ -139,10 +141,8 @@ assign dhcp_timeout = (dhcp_seconds_timer == 15);
 //-----------------------------------------------------------------------------
 //                             state machine
 //-----------------------------------------------------------------------------
-//IP addresses
 reg  [31:0] local_ip;
 wire [31:0] apipa_ip = {8'd169, 8'd254, local_mac[15:0]};
-//wire [31:0] ip_to_write;
 assign static_ip_assigned = (static_ip != 32'hFFFFFFFF) && (static_ip != 32'd0);
 
 
@@ -419,6 +419,12 @@ wire udp_rx_enable = ip_rx_active && !rx_is_icmp;
 assign udp_tx_enable = tx_start && (tx_is_udp || tx_is_dhcp);
 //udp_recv out
 assign udp_rx_data = rx_data;
+
+// Pipeline register to break critical combinational path to C&C modules
+always @(posedge rx_clock) begin
+	udp_rx_active_pipe <= udp_rx_active;
+	udp_rx_data_pipe   <= udp_rx_data;
+end
 
 //arp in
 wire arp_rx_enable = mac_rx_active && rx_is_arp;

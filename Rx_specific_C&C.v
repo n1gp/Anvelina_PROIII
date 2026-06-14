@@ -134,6 +134,7 @@ localparam
 			
 reg [31:0] sequence_number;
 reg [31:0] last_sequence_number;
+reg [31:0] expected_sequence_number;
 reg [10:0] byte_number;
 reg [15:0] tmpRxSampleRate[0:NR-1];
 integer j;
@@ -165,12 +166,13 @@ begin
 					2: sequence_number[15:8] <= udp_rx_data;
 					3: sequence_number[7:0] <= udp_rx_data;
 					// 4:	number of ADCs
-					4: begin
-						if (sequence_number != last_sequence_number + 1'b1)
+					4: expected_sequence_number <= last_sequence_number + 1'b1;
+					5: begin
+						if (sequence_number != expected_sequence_number)
 							sequence_errors <= sequence_errors + 1'b1;
 						last_sequence_number <= sequence_number;
-					end
-					5: dither 	<= udp_rx_data;
+						dither <= udp_rx_data;
+					   end
 					6: random	<= udp_rx_data;
 					7: EnableRx0_7	<= udp_rx_data; 
 					8: EnableRx8_15	<= udp_rx_data; 

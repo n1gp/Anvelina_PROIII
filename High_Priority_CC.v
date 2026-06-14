@@ -112,6 +112,7 @@ localparam
 			
 reg [31:0] sequence_number;
 reg [31:0] last_sequence_number;
+reg [31:0] expected_sequence_number;
 reg [10:0] byte_number;
 reg state;
 
@@ -119,6 +120,15 @@ reg state;
 reg [31:0]temp_Rx_frequency[0:NR-1];
 reg [47:0]temp_Alex_data;
 reg [15:0]temp_Alex_Tx_data;
+reg [31:0]temp_Tx0_frequency;  // Yurij eu2av - 2026-06-09: Pipeline register for Tx0_frequency
+reg [15:0]to_port_pipe;        // Yurij eu2av - 2026-06-09: Pipeline to_port to break critical path from udp_recv|to_port
+reg [15:0]High_Priority_from_PC_port_pipe; // Yurij eu2av - 2026-06-09: Pipeline to break critical path from General_CC|High_Priority_from_PC_port
+
+always @(posedge clock)
+    to_port_pipe <= to_port;
+
+always @(posedge clock)
+    High_Priority_from_PC_port_pipe <= High_Priority_from_PC_port;
 
 // per NR number
 genvar i;
@@ -126,7 +136,7 @@ generate
 for (i=0; i<NR; i=i+1) begin : rxloop
 	always @(posedge clock)
 	begin
-		if (udp_rx_active && to_port == High_Priority_from_PC_port)	// default port is 1027
+		if (udp_rx_active && to_port_pipe == High_Priority_from_PC_port_pipe)	// default port is 1027
 			case (state)
 				PROCESS:
 				case (byte_number)
@@ -152,7 +162,7 @@ begin
 	   PC_PTT <= 1'b0;
 	end
 
-  else if (udp_rx_active && to_port == High_Priority_from_PC_port)	// default port is 1027
+  else if (udp_rx_active && to_port_pipe == High_Priority_from_PC_port_pipe)	// default port is 1027
     case (state)
 		IDLE:
 			begin
@@ -176,20 +186,22 @@ begin
 							run <= udp_rx_data[0];
 							PC_PTT <= udp_rx_data[1]; //PTT0
 							// 2-4 = PTT1-PTT3
-							if (sequence_number != last_sequence_number + 1'b1)
-								sequence_errors <= sequence_errors + 1'b1;
-							last_sequence_number <= sequence_number;
+							expected_sequence_number <= last_sequence_number + 1'b1;
 						   end
 						5: begin
+							if (sequence_number != expected_sequence_number)
+								sequence_errors <= sequence_errors + 1'b1;
+							last_sequence_number <= sequence_number;
 							CWX  <= udp_rx_data[0];
 							Dot  <= udp_rx_data[1]; 
 							Dash <= udp_rx_data[2]; 
 						   end
 
-						 329:	Tx0_frequency [31:24]  <= udp_rx_data;
-						 330:	Tx0_frequency [23:16]  <= udp_rx_data;					
-						 331:	Tx0_frequency [15:8]   <= udp_rx_data;
-						 332:	Tx0_frequency [7:0]    <= udp_rx_data;	
+						 329:	temp_Tx0_frequency [31:24]  <= udp_rx_data;
+						 330:	temp_Tx0_frequency [23:16]  <= udp_rx_data;					
+						 331:	temp_Tx0_frequency [15:8]   <= udp_rx_data;
+						 332:	temp_Tx0_frequency [7:0]    <= udp_rx_data;
+						 333:	Tx0_frequency <= temp_Tx0_frequency;
 
 						 345: drive_level <= udp_rx_data;
 

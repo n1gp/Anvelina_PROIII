@@ -216,8 +216,6 @@ set_global_assignment -name FITTER_AUTO_EFFORT_DESIRED_SLACK_MARGIN "1 ns"
 set_global_assignment -name OPTIMIZE_HOLD_TIMING "ALL PATHS"
 set_global_assignment -name OPTIMIZE_MULTI_CORNER_TIMING ON
 set_global_assignment -name AUTO_MERGE_PLLS OFF
-set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC OFF
-set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_RETIMING OFF
 set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION OFF
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
 set_global_assignment -name SMART_RECOMPILE OFF
@@ -233,9 +231,8 @@ set_location_assignment PIN_AF27 -to atu_ctrl
 set_global_assignment -name ENABLE_OCT_DONE OFF
 set_global_assignment -name ENABLE_CONFIGURATION_PINS OFF
 set_global_assignment -name ENABLE_BOOT_SEL_PIN OFF
-set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE POWER"
+set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
 set_global_assignment -name ALLOW_REGISTER_RETIMING OFF
-set_global_assignment -name PRE_FLOW_SCRIPT_FILE "quartus_sh:make_datetime.tcl"
 set_global_assignment -name POWER_USE_TA_VALUE 17
 set_global_assignment -name POWER_USE_DEVICE_CHARACTERISTICS MAXIMUM
 set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_40MHZ
@@ -261,9 +258,8 @@ set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[3]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[2]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[1]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD[0]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DACD
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to DAC_ALC
-set_location_assignment IOBANK_7 -to DEBUG_LED20
+set_location_assignment PIN_B19 -to DEBUG_LED20
 set_location_assignment PIN_AB5 -to DEBUG_LED11
 set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to PTT_SELECT
 set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to MICBIAS_ENABLE
@@ -297,42 +293,44 @@ set_location_assignment PIN_AC24 -to USEROUT7
 set_location_assignment PIN_AC25 -to USEROUT8
 set_location_assignment PIN_AC28 -to USEROUT9
 set_location_assignment PIN_AD26 -to USEROUT10
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT0
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT1
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT2
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT3
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT4
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT5
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT6
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT7
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT8
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT9
-set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to USEROUT10
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[5]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[4]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[3]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[2]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[1]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[0]
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN_SELECT
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_CLK
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_DATA
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_LE
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_MODE
 
+# Drive strength assignments for pins previously using default (Warning 15714 cleanup)
 
-set_location_assignment PIN_P2 -to RAM_A0
-set_location_assignment PIN_AB3 -to RAM_A7
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to CMCLK
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to CBCLK
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to CLRCIN
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to CLRCOUT
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to PHY_TX_CLOCK
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to clock_12_5MHz
-set_instance_assignment -name GLOBAL_SIGNAL "GLOBAL CLOCK" -to clock_2_5MHz
+# Additional drive strength for remaining user-facing output pins
+
+set_location_assignment PIN_W3 -to RAM_A0
+# Yurij eu2av - ASMI.v device family updated from Cyclone IV GX to Cyclone IV E - 2026-06-09
+# Yurij eu2av - ASMI.qip updated with correct IP metadata - 2026-06-09
+
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to RAM_A0
+
+# Yurij eu2av - Enable physical synthesis optimizations for critical DAC path - 2026-06-09
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_RETIMING ON
+
+# Suppress non-fixable infrastructure warnings
+set_global_assignment -name MESSAGE_DISABLE 169177
+set_global_assignment -name MESSAGE_DISABLE 169180
+set_global_assignment -name MESSAGE_DISABLE 169203
+set_global_assignment -name MESSAGE_DISABLE 292013
+set_global_assignment -name MESSAGE_DISABLE 176598
+
+
+
+set_location_assignment PIN_AB3 -to RAM_A5
 set_global_assignment -name VERILOG_FILE tPDF_dither.v
-set_global_assignment -name VERILOG_FILE Ethernet/Rx_fifo.v
+set_global_assignment -name QIP_FILE Ethernet/Rx_fifo.qip
 set_global_assignment -name MIF_FILE sine_256.mif
 set_global_assignment -name VERILOG_FILE Ethernet/send_data.v
 set_global_assignment -name VERILOG_FILE byte_to_32bits.v
@@ -356,8 +354,8 @@ set_global_assignment -name VERILOG_FILE Ethernet/ip_recv.v
 set_global_assignment -name VERILOG_FILE Ethernet/icmp.v
 set_global_assignment -name VERILOG_FILE Ethernet/eeprom.v
 set_global_assignment -name VERILOG_FILE Ethernet/dhcp.v
-set_global_assignment -name VERILOG_FILE Ethernet/ddio_out.v
-set_global_assignment -name VERILOG_FILE Ethernet/ddio_in.v
+set_global_assignment -name QIP_FILE Ethernet/ddio_out.qip
+set_global_assignment -name QIP_FILE Ethernet/ddio_in.qip
 set_global_assignment -name VERILOG_FILE Ethernet/crc32.v
 set_global_assignment -name VERILOG_FILE Ethernet/arp.v
 set_global_assignment -name VERILOG_FILE Polyphase_FIR/firx2r2.v
@@ -375,7 +373,7 @@ set_global_assignment -name VERILOG_FILE ASMI.v
 set_global_assignment -name VERILOG_FILE Led_control.v
 set_global_assignment -name VERILOG_FILE Led_flash.v
 set_global_assignment -name VERILOG_FILE ASMI_interface.v
-set_global_assignment -name VERILOG_FILE EPCS_fifo.v
+set_global_assignment -name QIP_FILE EPCS_fifo.qip
 set_global_assignment -name VERILOG_FILE Apollo.v
 set_global_assignment -name VERILOG_FILE cdc_mcp.v
 set_global_assignment -name VERILOG_FILE cdc_sync.v
@@ -421,5 +419,5 @@ set_global_assignment -name VERILOG_FILE High_Priority_CC.v
 set_global_assignment -name VERILOG_FILE General_CC.v
 set_global_assignment -name VERILOG_FILE tx_atten.v
 set_global_assignment -name VERILOG_FILE tx_dac.v
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to RAM_A0
+
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

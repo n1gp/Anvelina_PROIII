@@ -125,7 +125,7 @@ GND                          : AA27      : gnd    :                   :         
 VCCIO5                       : AA28      : power  :                   : 3.3V    : 5         :                
 DEBUG_LED14                  : AB1       : output : 3.3-V LVTTL       :         : 2         : Y              
 RESERVED_INPUT               : AB2       :        :                   :         : 2         :                
-RAM_A7                       : AB3       : output : 3.3-V LVTTL       :         : 2         : Y              
+RAM_A5                       : AB3       : output : 3.3-V LVTTL       :         : 2         : Y              
 RESERVED_INPUT               : AB4       :        :                   :         : 2         :                
 DEBUG_LED11                  : AB5       : output : 3.3-V LVTTL       :         : 2         : Y              
 RESERVED_INPUT               : AB6       :        :                   :         : 2         :                
@@ -402,7 +402,7 @@ INA[2]                       : D26       : input  : 3.3-V LVTTL       :         
 RESERVED_INPUT               : D27       :        :                   :         : 6         :                
 RESERVED_INPUT               : D28       :        :                   :         : 6         :                
 PHY_RX[0]                    : E1        : input  : 3.3-V LVTTL       :         : 1         : Y              
-ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_SCE : E2        : output : 3.3-V LVTTL       :         : 1         : N              
+ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_SCE : E2        : output : 3.3-V LVTTL       :         : 1         : N              
 RESERVED_INPUT               : E3        :        :                   :         : 1         :                
 PHY_RX[1]                    : E4        : input  : 3.3-V LVTTL       :         : 8         : Y              
 PHY_RX[2]                    : E5        : input  : 3.3-V LVTTL       :         : 8         : Y              
@@ -432,7 +432,7 @@ RESERVED_INPUT               : E28       :        :                   :         
 PHY_RX[3]                    : F1        : input  : 3.3-V LVTTL       :         : 1         : Y              
 PHY_TX_EN                    : F2        : output : 3.3-V LVTTL       :         : 1         : Y              
 RESERVED_INPUT               : F3        :        :                   :         : 1         :                
-ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_SDO : F4        : output : 3.3-V LVTTL       :         : 1         : N              
+ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_SDO : F4        : output : 3.3-V LVTTL       :         : 1         : N              
 PHY_TX[3]                    : F5        : output : 3.3-V LVTTL       :         : 1         : Y              
 GND                          : F6        : gnd    :                   :         :           :                
 RESERVED_INPUT               : F7        :        :                   :         : 8         :                
@@ -631,7 +631,7 @@ RESERVED_INPUT               : N3        :        :                   :         
 RESERVED_INPUT               : N4        :        :                   :         : 1         :                
 VCCIO1                       : N5        : power  :                   : 3.3V    : 1         :                
 GND                          : N6        : gnd    :                   :         :           :                
-ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_DATA0 : N7        : input  : 3.3-V LVTTL       :         : 1         : N              
+ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_DATA0 : N7        : input  : 3.3-V LVTTL       :         : 1         : N              
 RESERVED_INPUT               : N8        :        :                   :         : 1         :                
 GND                          : N9        : gnd    :                   :         :           :                
 VCCINT                       : N10       : power  :                   : 1.2V    :           :                
@@ -654,8 +654,8 @@ RESERVED_INPUT               : N26       :        :                   :         
 GND                          : N27       : gnd    :                   :         :           :                
 VCCIO6                       : N28       : power  :                   : 3.3V    : 6         :                
 RESERVED_INPUT               : P1        :        :                   :         : 1         :                
-RAM_A0                       : P2        : output : 3.3-V LVTTL       :         : 1         : Y              
-ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|sd2~ALTERA_DCLK : P3        : output : 3.3-V LVTTL       :         : 1         : N              
+RESERVED_INPUT               : P2        :        :                   :         : 1         :                
+ASMI_interface:ASMI_int_inst|ASMI:ASMI_inst|ASMI_altasmi_parallel_smm2:ASMI_altasmi_parallel_smm2_component|cycloneii_asmiblock2~ALTERA_DCLK : P3        : output : 3.3-V LVTTL       :         : 1         : N              
 nCONFIG                      : P4        :        :                   :         : 1         :                
 TCK                          : P5        : input  :                   :         : 1         :                
 TDO                          : P6        : output :                   :         : 1         :                
@@ -795,7 +795,7 @@ RESERVED_INPUT               : V27       :        :                   :         
 RESERVED_INPUT               : V28       :        :                   :         : 5         :                
 RESERVED_INPUT               : W1        :        :                   :         : 2         :                
 RESERVED_INPUT               : W2        :        :                   :         : 2         :                
-RESERVED_INPUT               : W3        :        :                   :         : 2         :                
+RAM_A0                       : W3        : output : 3.3-V LVTTL       :         : 2         : Y              
 RESERVED_INPUT               : W4        :        :                   :         : 2         :                
 VCCIO2                       : W5        : power  :                   : 3.3V    : 2         :                
 GND                          : W6        : gnd    :                   :         :           :                

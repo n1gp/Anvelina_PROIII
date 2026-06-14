@@ -50,7 +50,8 @@ wire signed [21:0] cordic_outdata_Q;
 wire signed [21:0] cordic_dithered_I;
 wire signed [21:0] cordic_dithered_Q;
 
-reg [5:0] rate0, rate1;
+reg [6:0] rate0;        // Yurij eu2av - 2026-06-09: widened to match cic.v decimation port (7-bit for MAX_DECIMATION=40)
+reg [5:0] rate1;
 
 //------------------------------------------------------------------------------
 //                               cordic
@@ -89,13 +90,13 @@ tPDF_dither_22bit dither_Q(
 always @ (sample_rate)				
 begin 
 	case (sample_rate)	
-	 16'd48: begin rate0 <= 6'd40; rate1 <= 6'd32; end
-	 16'd96: begin rate0 <= 6'd20; rate1 <= 6'd32; end		 
-	16'd192: begin rate0 <= 6'd10; rate1 <= 6'd32; end		  
-	16'd384: begin rate0 <= 6'd5;  rate1 <= 6'd32; end	  
-	16'd768: begin rate0 <= 6'd5;  rate1 <= 6'd16; end	
-  16'd1536: begin rate0 <= 6'd5; rate1 <= 6'd8;  end
-  default: begin rate0 <= 6'd40; rate1 <= 6'd32; end
+	 16'd48: begin rate0 <= 7'd40; rate1 <= 6'd32; end
+	 16'd96: begin rate0 <= 7'd20; rate1 <= 6'd32; end		 
+	16'd192: begin rate0 <= 7'd10; rate1 <= 6'd32; end		  
+	16'd384: begin rate0 <= 7'd5;  rate1 <= 6'd32; end	  
+	16'd768: begin rate0 <= 7'd5;  rate1 <= 6'd16; end	
+  16'd1536: begin rate0 <= 7'd5; rate1 <= 6'd8;  end
+  default: begin rate0 <= 7'd40; rate1 <= 6'd32; end
 	endcase
 end 
   
