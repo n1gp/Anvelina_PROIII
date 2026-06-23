@@ -19,6 +19,10 @@ Boston, MA  02110-1301, USA.
 //------------------------------------------------------------------------------
 //           Copyright (c) 2008 Alex Shovkoplyas, VE3NEA
 //------------------------------------------------------------------------------
+// 2026 Jun 14 - (eu2av-Yurij)
+// - Removed unused cic_comp module (dead code).
+// - cic_comb itself unchanged.
+//------------------------------------------------------------------------------
 
 
 
@@ -44,20 +48,4 @@ always @(posedge clock)
 
 endmodule
 
-module cic_comp(
-  input clock,
-  input signed [17:0] cic_in,
-  output signed [17:0] cic_out
-);
-  // Коэффициенты для компенсации sinc^4 при R=40..640
-  localparam B0 = 18'b000000000000000001; // 1
-  localparam B1 = 18'b111111111111111110; // -2
-  localparam B2 = 18'b000000000000000001; // 1
-  
-  reg signed [17:0] d1, d2;
-  always @(posedge clock) begin
-    d1 <= cic_in;
-    d2 <= d1;
-    cic_out <= (B0 * cic_in) + (B1 * d1) + (B2 * d2); // FIR 2nd order
-  end
-endmodule
+// (Unused cic_comp module removed during DSP audit.)

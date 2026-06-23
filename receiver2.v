@@ -31,6 +31,12 @@ Boston, MA  02110-1301, USA.
 //      Jul 25 - add reset to CORDIC, CIC and FIR for Sync operation
 //05/05/2026//eu2av//========================================================
 // Module: tPDF_dither_22bit
+//14/06/2026//eu2av-Yurij//=================================================
+// - Registered rate0/rate1 (sample_rate decoder outputs) to break the long
+//   combinational path from the C&C CDC output to the CIC control logic.
+//   This was required to close timing after adding CIC output saturation.
+// - rate0 widened to [6:0] earlier to match the 7-bit CIC decimation port.
+//=============================================================
 
 module receiver2(
   input reset,
@@ -50,8 +56,10 @@ wire signed [21:0] cordic_outdata_Q;
 wire signed [21:0] cordic_dithered_I;
 wire signed [21:0] cordic_dithered_Q;
 
-reg [6:0] rate0;        // Yurij eu2av - 2026-06-09: widened to match cic.v decimation port (7-bit for MAX_DECIMATION=40)
+reg [6:0] rate0;
 reg [5:0] rate1;
+reg [6:0] rate0_next;   // combinational decoder output
+reg [5:0] rate1_next;
 
 //------------------------------------------------------------------------------
 //                               cordic
@@ -87,18 +95,33 @@ tPDF_dither_22bit dither_Q(
 //------------------------------------------------------------------------------
 // Select CIC decimation rates based on sample_rate
 //------------------------------------------------------------------------------
-always @ (sample_rate)				
-begin 
-	case (sample_rate)	
-	 16'd48: begin rate0 <= 7'd40; rate1 <= 6'd32; end
-	 16'd96: begin rate0 <= 7'd20; rate1 <= 6'd32; end		 
-	16'd192: begin rate0 <= 7'd10; rate1 <= 6'd32; end		  
-	16'd384: begin rate0 <= 7'd5;  rate1 <= 6'd32; end	  
-	16'd768: begin rate0 <= 7'd5;  rate1 <= 6'd16; end	
-  16'd1536: begin rate0 <= 7'd5; rate1 <= 6'd8;  end
-  default: begin rate0 <= 7'd40; rate1 <= 6'd32; end
+// Combinational decoder produces the next rate values...
+always @ (*)
+begin
+	case (sample_rate)
+	 16'd48: begin rate0_next = 7'd40; rate1_next = 6'd32; end
+	 16'd96: begin rate0_next = 7'd20; rate1_next = 6'd32; end
+	16'd192: begin rate0_next = 7'd10; rate1_next = 6'd32; end
+	16'd384: begin rate0_next = 7'd5;  rate1_next = 6'd32; end
+	16'd768: begin rate0_next = 7'd5;  rate1_next = 6'd16; end
+  16'd1536: begin rate0_next = 7'd5;  rate1_next = 6'd8;  end
+  default: begin rate0_next = 7'd40; rate1_next = 6'd32; end
 	endcase
-end 
+end
+
+// ...registered to break the long combinational path from the C&C sample_rate
+// CDC output to the CIC control logic.
+always @ (posedge clock)
+begin
+	if (reset) begin
+		rate0 <= 7'd40;
+		rate1 <= 6'd32;
+	end else begin
+		rate0 <= rate0_next;
+		rate1 <= rate1_next;
+	end
+end
+
   
 //------------------------------------------------------------------------------
 // Receive CIC filters followed by FIR filter

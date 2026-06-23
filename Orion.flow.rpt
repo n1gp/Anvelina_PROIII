@@ -1,5 +1,5 @@
 Flow report for Orion
-Sun Jun 14 02:15:31 2026
+Mon Jun 22 18:52:13 2026
 Quartus Prime Version 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 
 
@@ -41,17 +41,17 @@ on the Quartus Prime software download page.
 +--------------------------------------------------------------------------------------+
 ; Flow Summary                                                                         ;
 +------------------------------------+-------------------------------------------------+
-; Flow Status                        ; Successful - Sun Jun 14 02:15:03 2026           ;
+; Flow Status                        ; Successful - Mon Jun 22 18:51:45 2026           ;
 ; Quartus Prime Version              ; 25.1std.0 Build 1129 10/21/2025 SC Lite Edition ;
 ; Revision Name                      ; Orion                                           ;
 ; Top-level Entity Name              ; Orion                                           ;
 ; Family                             ; Cyclone IV E                                    ;
 ; Device                             ; EP4CE115F29I7                                   ;
 ; Timing Models                      ; Final                                           ;
-; Total logic elements               ; 94,151 / 114,480 ( 82 % )                       ;
-;     Total combinational functions  ; 73,365 / 114,480 ( 64 % )                       ;
-;     Dedicated logic registers      ; 75,572 / 114,480 ( 66 % )                       ;
-; Total registers                    ; 75582                                           ;
+; Total logic elements               ; 97,490 / 114,480 ( 85 % )                       ;
+;     Total combinational functions  ; 76,754 / 114,480 ( 67 % )                       ;
+;     Dedicated logic registers      ; 76,082 / 114,480 ( 66 % )                       ;
+; Total registers                    ; 76092                                           ;
 ; Total pins                         ; 179 / 529 ( 34 % )                              ;
 ; Total virtual pins                 ; 0                                               ;
 ; Total memory bits                  ; 1,229,728 / 3,981,312 ( 31 % )                  ;
@@ -65,60 +65,59 @@ on the Quartus Prime software download page.
 +-------------------+---------------------+
 ; Option            ; Setting             ;
 +-------------------+---------------------+
-; Start date & time ; 06/14/2026 02:03:38 ;
+; Start date & time ; 06/22/2026 18:40:04 ;
 ; Main task         ; Compilation         ;
 ; Revision Name     ; Orion               ;
 +-------------------+---------------------+
 
 
-+-----------------------------------------------------------------------------------------------------------------------------+
-; Flow Non-Default Global Settings                                                                                            ;
-+-----------------------------------------+----------------------------------------+---------------+-------------+------------+
-; Assignment Name                         ; Value                                  ; Default Value ; Entity Name ; Section Id ;
-+-----------------------------------------+----------------------------------------+---------------+-------------+------------+
-; ADV_NETLIST_OPT_SYNTH_WYSIWYG_REMAP     ; On                                     ; Off           ; --          ; --         ;
-; ALLOW_POWER_UP_DONT_CARE                ; Off                                    ; On            ; --          ; --         ;
-; ALLOW_REGISTER_RETIMING                 ; Off                                    ; On            ; --          ; --         ;
-; AUTO_MERGE_PLLS                         ; Off                                    ; On            ; --          ; --         ;
-; COMPILER_SIGNATURE_ID                   ; 26601950300764.178141701821213         ; --            ; --          ; --         ;
-; FITTER_AUTO_EFFORT_DESIRED_SLACK_MARGIN ; 1 ns                                   ; 0 ns          ; --          ; --         ;
-; MAX_CORE_JUNCTION_TEMP                  ; 100                                    ; --            ; --          ; --         ;
-; MESSAGE_DISABLE                         ; 169177                                 ; --            ; --          ; --         ;
-; MESSAGE_DISABLE                         ; 169180                                 ; --            ; --          ; --         ;
-; MESSAGE_DISABLE                         ; 169203                                 ; --            ; --          ; --         ;
-; MESSAGE_DISABLE                         ; 292013                                 ; --            ; --          ; --         ;
-; MESSAGE_DISABLE                         ; 176598                                 ; --            ; --          ; --         ;
-; MIN_CORE_JUNCTION_TEMP                  ; -40                                    ; --            ; --          ; --         ;
-; MISC_FILE                               ; PLL_IF.ppf                             ; --            ; --          ; --         ;
-; MISC_FILE                               ; C122_PLL_bb.v                          ; --            ; --          ; --         ;
-; MISC_FILE                               ; C122_PLL.ppf                           ; --            ; --          ; --         ;
-; MISC_FILE                               ; tx_pll.ppf                             ; --            ; --          ; --         ;
-; MISC_FILE                               ; PLL_30MHz_bb.v                         ; --            ; --          ; --         ;
-; MISC_FILE                               ; PLL_30MHz.ppf                          ; --            ; --          ; --         ;
-; NUM_PARALLEL_PROCESSORS                 ; All                                    ; --            ; --          ; --         ;
-; OPTIMIZATION_MODE                       ; High Performance Effort                ; Balanced      ; --          ; --         ;
-; OUTPUT_IO_TIMING_FAR_END_VMEAS          ; Half Signal Swing                      ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_FAR_END_VMEAS          ; Half Signal Swing                      ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_NEAR_END_VMEAS         ; Half Vccio                             ; --            ; --          ; --         ;
-; OUTPUT_IO_TIMING_NEAR_END_VMEAS         ; Half Vccio                             ; --            ; --          ; --         ;
-; PARTITION_COLOR                         ; -- (Not supported for targeted family) ; --            ; --          ; Top        ;
-; PARTITION_FITTER_PRESERVATION_LEVEL     ; -- (Not supported for targeted family) ; --            ; --          ; Top        ;
-; PARTITION_NETLIST_TYPE                  ; -- (Not supported for targeted family) ; --            ; --          ; Top        ;
-; PHYSICAL_SYNTHESIS_COMBO_LOGIC          ; On                                     ; Off           ; --          ; --         ;
-; PLACEMENT_EFFORT_MULTIPLIER             ; 4.0                                    ; 1.0           ; --          ; --         ;
-; POWER_BOARD_THERMAL_MODEL               ; None (CONSERVATIVE)                    ; --            ; --          ; --         ;
-; POWER_PRESET_COOLING_SOLUTION           ; 15 MM HEAT SINK WITH STILL AIR         ; --            ; --          ; --         ;
-; POWER_USE_DEVICE_CHARACTERISTICS        ; MAXIMUM                                ; TYPICAL       ; --          ; --         ;
-; POWER_USE_TA_VALUE                      ; 17                                     ; 25            ; --          ; --         ;
-; ROUTER_TIMING_OPTIMIZATION_LEVEL        ; MAXIMUM                                ; Normal        ; --          ; --         ;
-; SEARCH_PATH                             ; ethernet/                              ; --            ; --          ; --         ;
-; SEARCH_PATH                             ; Polyphase_FIR/                         ; --            ; --          ; --         ;
-; SEED                                    ; 4                                      ; 1             ; --          ; --         ;
-; VERILOG_INPUT_VERSION                   ; SystemVerilog_2005                     ; Verilog_2001  ; --          ; --         ;
-; VERILOG_SHOW_LMF_MAPPING_MESSAGES       ; Off                                    ; --            ; --          ; --         ;
-; VHDL_INPUT_VERSION                      ; VHDL_2008                              ; VHDL_1993     ; --          ; --         ;
-; VHDL_SHOW_LMF_MAPPING_MESSAGES          ; Off                                    ; --            ; --          ; --         ;
-+-----------------------------------------+----------------------------------------+---------------+-------------+------------+
++--------------------------------------------------------------------------------------------------------------------------------+
+; Flow Non-Default Global Settings                                                                                               ;
++--------------------------------------------+----------------------------------------+---------------+-------------+------------+
+; Assignment Name                            ; Value                                  ; Default Value ; Entity Name ; Section Id ;
++--------------------------------------------+----------------------------------------+---------------+-------------+------------+
+; ADV_NETLIST_OPT_SYNTH_WYSIWYG_REMAP        ; On                                     ; Off           ; --          ; --         ;
+; ALLOW_POWER_UP_DONT_CARE                   ; Off                                    ; On            ; --          ; --         ;
+; ALLOW_REGISTER_RETIMING                    ; Off                                    ; On            ; --          ; --         ;
+; AUTO_MERGE_PLLS                            ; Off                                    ; On            ; --          ; --         ;
+; COMPILER_SIGNATURE_ID                      ; 26601950300764.178216800422979         ; --            ; --          ; --         ;
+; FITTER_AGGRESSIVE_ROUTABILITY_OPTIMIZATION ; Always                                 ; Automatically ; --          ; --         ;
+; FITTER_AUTO_EFFORT_DESIRED_SLACK_MARGIN    ; 1 ns                                   ; 0 ns          ; --          ; --         ;
+; MAX_CORE_JUNCTION_TEMP                     ; 100                                    ; --            ; --          ; --         ;
+; MESSAGE_DISABLE                            ; 169177                                 ; --            ; --          ; --         ;
+; MESSAGE_DISABLE                            ; 169180                                 ; --            ; --          ; --         ;
+; MESSAGE_DISABLE                            ; 169203                                 ; --            ; --          ; --         ;
+; MESSAGE_DISABLE                            ; 292013                                 ; --            ; --          ; --         ;
+; MESSAGE_DISABLE                            ; 176598                                 ; --            ; --          ; --         ;
+; MIN_CORE_JUNCTION_TEMP                     ; -40                                    ; --            ; --          ; --         ;
+; MISC_FILE                                  ; PLL_IF.ppf                             ; --            ; --          ; --         ;
+; MISC_FILE                                  ; C122_PLL_bb.v                          ; --            ; --          ; --         ;
+; MISC_FILE                                  ; C122_PLL.ppf                           ; --            ; --          ; --         ;
+; MISC_FILE                                  ; tx_pll.ppf                             ; --            ; --          ; --         ;
+; MISC_FILE                                  ; PLL_30MHz_bb.v                         ; --            ; --          ; --         ;
+; MISC_FILE                                  ; PLL_30MHz.ppf                          ; --            ; --          ; --         ;
+; NUM_PARALLEL_PROCESSORS                    ; All                                    ; --            ; --          ; --         ;
+; OPTIMIZATION_MODE                          ; High Power Effort                      ; Balanced      ; --          ; --         ;
+; OUTPUT_IO_TIMING_FAR_END_VMEAS             ; Half Signal Swing                      ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_FAR_END_VMEAS             ; Half Signal Swing                      ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_NEAR_END_VMEAS            ; Half Vccio                             ; --            ; --          ; --         ;
+; OUTPUT_IO_TIMING_NEAR_END_VMEAS            ; Half Vccio                             ; --            ; --          ; --         ;
+; PARTITION_COLOR                            ; -- (Not supported for targeted family) ; --            ; --          ; Top        ;
+; PARTITION_FITTER_PRESERVATION_LEVEL        ; -- (Not supported for targeted family) ; --            ; --          ; Top        ;
+; PARTITION_NETLIST_TYPE                     ; -- (Not supported for targeted family) ; --            ; --          ; Top        ;
+; PHYSICAL_SYNTHESIS_COMBO_LOGIC             ; On                                     ; Off           ; --          ; --         ;
+; POWER_BOARD_THERMAL_MODEL                  ; None (CONSERVATIVE)                    ; --            ; --          ; --         ;
+; POWER_PRESET_COOLING_SOLUTION              ; 15 MM HEAT SINK WITH STILL AIR         ; --            ; --          ; --         ;
+; POWER_USE_DEVICE_CHARACTERISTICS           ; MAXIMUM                                ; TYPICAL       ; --          ; --         ;
+; POWER_USE_TA_VALUE                         ; 17                                     ; 25            ; --          ; --         ;
+; SEARCH_PATH                                ; ethernet/                              ; --            ; --          ; --         ;
+; SEARCH_PATH                                ; Polyphase_FIR/                         ; --            ; --          ; --         ;
+; SEED                                       ; 4                                      ; 1             ; --          ; --         ;
+; VERILOG_INPUT_VERSION                      ; SystemVerilog_2005                     ; Verilog_2001  ; --          ; --         ;
+; VERILOG_SHOW_LMF_MAPPING_MESSAGES          ; Off                                    ; --            ; --          ; --         ;
+; VHDL_INPUT_VERSION                         ; VHDL_2008                              ; VHDL_1993     ; --          ; --         ;
+; VHDL_SHOW_LMF_MAPPING_MESSAGES             ; Off                                    ; --            ; --          ; --         ;
++--------------------------------------------+----------------------------------------+---------------+-------------+------------+
 
 
 +--------------------------------------------------------------------------------------------------------------------------+
@@ -126,11 +125,11 @@ on the Quartus Prime software download page.
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 ; Module Name          ; Elapsed Time ; Average Processors Used ; Peak Virtual Memory ; Total CPU Time (on all processors) ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
-; Analysis & Synthesis ; 00:02:59     ; 1.2                     ; 1761 MB             ; 00:03:11                           ;
-; Fitter               ; 00:07:57     ; 1.6                     ; 4437 MB             ; 00:34:52                           ;
-; Assembler            ; 00:00:07     ; 1.0                     ; 714 MB              ; 00:00:07                           ;
-; Timing Analyzer      ; 00:00:26     ; 2.1                     ; 1705 MB             ; 00:00:45                           ;
-; Total                ; 00:11:29     ; --                      ; --                  ; 00:38:55                           ;
+; Analysis & Synthesis ; 00:02:45     ; 1.2                     ; 1735 MB             ; 00:02:57                           ;
+; Fitter               ; 00:08:27     ; 1.6                     ; 4474 MB             ; 00:44:41                           ;
+; Assembler            ; 00:00:07     ; 1.0                     ; 717 MB              ; 00:00:06                           ;
+; Timing Analyzer      ; 00:00:27     ; 2.2                     ; 1773 MB             ; 00:00:46                           ;
+; Total                ; 00:11:46     ; --                      ; --                  ; 00:48:30                           ;
 +----------------------+--------------+-------------------------+---------------------+------------------------------------+
 
 

@@ -59,6 +59,12 @@
 //   pipeline register expected_sequence_number to keep timing clean.
 // - Added to_port_pipe pipeline register in High_Priority_CC.v to break
 //   critical path from udp_recv|to_port to temp_Rx_frequency/temp_Tx0_frequency.
+// Yurij eu2av - 2026-06-14
+// - Receiver DSP path fixes (see receiver2.v / cic.v / firx2r2.v / cic_comb.v):
+//   * CIC outputs now use round-half-up + saturation.
+//   * Polyphase FIR accumulator widened to 26 bits with output saturation.
+//   * Dead cic_comp module removed.
+//   * sample_rate (rate0/rate1) registered in receiver2.v to close timing.
 //=============================================================================
 
 /*
@@ -640,7 +646,7 @@
 			the new ports sent to General_CC so applications don't have to use default ports.
 
 2026	Feb 17 -(eu2av) An additional OC-collector group has been created [4:0]Open_Collector_Anvelina_DX
-			1397:	Open_Collector_Anvelina_DX 		  <=  udp_rx_data			
+			1397:	Open_Collector_Anvelina_DX  <=  udp_rx_data			
 
 2026	Mar 17 - (N1GP) Added ADC maximum magnitude to CC_encoder output, used when overload bit is set
 			so client can use an auto attenuate algorythm.
@@ -654,6 +660,39 @@
 			TX/NCO: Added Phase Dither to CORDIC phase accumulator. Result: Significant reduction of spurious harmonics (spurs), improved SFDR (+10-15 dB).
 			Filters: Changed FIR truncation to "round-to-nearest" logic. Result: Eliminated DC offset peak at center frequency, improved calculation accuracy.
 			PureSignal: Added adaptive scaling for the feedback path to ensure stable convergence at low output power levels. 
+
+2026	May 09 -(eu2av) Updated ASMI IP device family from Cyclone IV GX to Cyclone IV E
+			  (fixes Warning 169180 clamping diode on internal DATA0 pin)
+			Added pipeline register C122_cordic_i_out_pipe on _122_90 clock to break
+			  critical cross-clock path from CORDIC (C122_clk) to temp_DACD.
+			  Improves setup slack for PLL_IF.c0 (122.88 MHz DAC) domain.
+			PSA switching stability fixes:
+			* Added cold-boot qualification: ps = C122_run ? (C122_RxADC[1]==2) : 0
+			  to prevent random PSA state at power-up before system sync.
+			* Added 2-tap debounce (ps_d1/ps_d2) and sample-boundary switch in
+			  Rx_fifo_ctrl.v to prevent mid-sample phase jumps (later simplified
+			  to direct ps after confirming clean switching).
+			* Restored sequence_errors counting in rx_clock domain with pipeline
+			  register expected_sequence_number in High_Priority_CC.v and
+			  Rx_specific_C&C.v; removed broken CDC to CBCLK (cdc_sync for 32-bit
+			  counters caused random glitches).
+			* Replaced cdc_sync_ALL for sequence_errors sum with cdc_mcp handshake.
+			SDC audit fixes: LTC2208_122MHz_2 merged into same clock group (both ADCs
+			  share same source via dual-channel driver). Removed false_path between them.
+			Updated ASMI constraint names (sd2~ -> cycloneii_asmiblock2~) and restored.
+			Relaxed set_max_delay CMCLK->_122_90 from 4ns to 8ns.
+			Added temp_Tx0_frequency pipeline register in High_Priority_CC.v to break
+			  critical path udp_recv|to_port -> Tx0_frequency.
+			Restored != 16'd0 check in Rx_specific_C&C.v for RxSampleRate with
+			  pipeline register expected_sequence_number to keep timing clean.
+			Added to_port_pipe pipeline register in High_Priority_CC.v to break
+			  critical path from udp_recv|to_port to temp_Rx_frequency/temp_Tx0_frequency.
+
+2026	Jun 14 -(eu2av) Receiver DSP path fixes (see receiver2.v / cic.v / firx2r2.v / cic_comb.v):
+			* CIC outputs now use round-half-up + saturation.
+			* Polyphase FIR accumulator widened to 26 bits with output saturation.
+			* Dead cic_comp module removed.
+			* sample_rate (rate0/rate1) registered in receiver2.v to close timing.
 */
 
 module Orion(
@@ -890,7 +929,7 @@ parameter IF_TPD  = 2;
 
 localparam board_type = 8'h05;		  	// 00 for Metis, 01 for Hermes, 02 for Griffin, 03 for Angelia, and 05 for Orion
 parameter  Orion_version = 8'd22;			// FPGA code version
-parameter  beta_version = 8'd13;	// Should be 0 for official release
+parameter  beta_version = 8'd14;	// Should be 0 for official release
 parameter  protocol_version = 8'd44;	// openHPSDR protocol version implemented
 
 //--------------------------------------------------------------
@@ -1387,7 +1426,39 @@ wire sp_fifo_wrreq;
 wire have_sp_data;
 
 wire wideband = (Wideband_enable[0] | Wideband_enable[1]);  							// enable Wideband data if either selected
-wire [15:0] Wideband_source = Wideband_enable[0] ? temp_ADC[0] : temp_ADC[1];	// select Wideband data source ADC0 or ADC1
+//==============================================================================
+// TPDF Dither for Wideband stream (SpectraCom / Thetis waterfall)
+//==============================================================================
+reg [15:0] lfsr_wb;
+always @(posedge C122_clk or negedge C122_run) begin
+    if (!C122_run)
+        lfsr_wb <= 16'hACE1;
+    else
+        lfsr_wb <= {lfsr_wb[14:0], lfsr_wb[15] ^ lfsr_wb[13] ^ lfsr_wb[12] ^ lfsr_wb[10]};
+end
+
+// TPDF = sum of two independent, zero-mean uniform distributions.
+// Each uniform is +/-8 LSB, the resulting triangular PDF is approx +/-16 LSB, mean = 0.
+wire signed [4:0] u1 = $signed({1'b0, lfsr_wb[3:0]}) - 5'sd8;
+wire signed [4:0] u2 = $signed({1'b0, lfsr_wb[7:4]}) - 5'sd8;
+wire signed [4:0] dither_wb = u1 + u2;
+
+localparam signed [15:0] MAX_16 = 16'sd32767;
+localparam signed [15:0] MIN_16 = 16'sh8000; // -32768
+
+// Dither + hard clip for ADC0
+wire signed [16:0] sum_adc0 = $signed(temp_ADC[0]) + $signed({{12{dither_wb[4]}}, dither_wb});
+wire signed [15:0] dithered_ADC0 = (sum_adc0 > MAX_16) ? MAX_16 :
+                                   (sum_adc0 < MIN_16) ? MIN_16 :
+                                   sum_adc0[15:0];
+
+// Dither + hard clip for ADC1
+wire signed [16:0] sum_adc1 = $signed(temp_ADC[1]) + $signed({{12{dither_wb[4]}}, dither_wb});
+wire signed [15:0] dithered_ADC1 = (sum_adc1 > MAX_16) ? MAX_16 :
+                                   (sum_adc1 < MIN_16) ? MIN_16 :
+                                   sum_adc1[15:0];
+
+wire [15:0] Wideband_source = Wideband_enable[0] ? dithered_ADC0 : dithered_ADC1;	// select dithered Wideband data source ADC0 or ADC1
 
 SP_fifo  SPF (.aclr(!wideband), .wrclk (C122_clk), .rdclk(tx_clock), 
              .wrreq (sp_fifo_wrreq), .data ({Wideband_source[7:0], Wideband_source[15:8]}), .rdreq (sp_fifo_rdreq),

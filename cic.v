@@ -20,6 +20,10 @@
 
 
 // 2013 Jan 26	- Modified to accept decimation values from 1-40. VK6APH 
+// 2026 Jun 14	- (eu2av-Yurij) Added output saturation limits and simple
+//				  round-half-up to prevent wrap-around on full-scale signals.
+//				  Convergent rounding was tested but rejected because it cost
+//				  ~5k LE and broke timing.
 
 module cic(reset, decimation, clock, in_strobe,  out_strobe, in_data, out_data);
 
@@ -41,6 +45,10 @@ module cic(reset, decimation, clock, in_strobe,  out_strobe, in_data, out_data);
 
   input signed [IN_WIDTH-1:0] in_data;
   output signed [OUT_WIDTH-1:0] out_data;
+
+  // Saturation limits for the final output width.
+  localparam signed [OUT_WIDTH-1:0] MAX_OUT = {1'b0, {(OUT_WIDTH-1){1'b1}}};
+  localparam signed [OUT_WIDTH-1:0] MIN_OUT = {1'b1, {(OUT_WIDTH-1){1'b0}}};
 
 
 //------------------------------------------------------------------------------
@@ -119,14 +127,28 @@ endgenerate
 genvar i;
 generate
 	if(MIN_DECIMATION == MAX_DECIMATION) begin
-		assign out_data = comb_data[STAGES][ACC_WIDTH - 1 -: OUT_WIDTH] + comb_data[STAGES][ACC_WIDTH - OUT_WIDTH - 1];
+		// Simple round-half-up using the bit just below the output LSB, then
+		// saturate to the output width to avoid wrap-around.
+		wire signed [OUT_WIDTH:0] rounded = $signed(comb_data[STAGES][ACC_WIDTH - 1 -: OUT_WIDTH])
+		                                  + comb_data[STAGES][ACC_WIDTH - OUT_WIDTH - 1];
+
+		assign out_data = (rounded > MAX_OUT) ? MAX_OUT :
+		                  (rounded < MIN_OUT) ? MIN_OUT :
+						  rounded[OUT_WIDTH-1:0];
 	end else begin
 		wire [31:0] msb [MAX_DECIMATION:MIN_DECIMATION];
 		for(i = MIN_DECIMATION; i <= MAX_DECIMATION; i = i + 1) begin: round_position
 			assign msb[i] = IN_WIDTH + ($clog2(i) * STAGES) - 1 ;
 		end
 
-		assign out_data = comb_data[STAGES][msb[decimation] -: OUT_WIDTH] + comb_data[STAGES][msb[decimation] - OUT_WIDTH];
+		// Simple round-half-up using the bit just below the output LSB, then
+		// saturate to the output width to avoid wrap-around.
+		wire signed [OUT_WIDTH:0] rounded = $signed(comb_data[STAGES][msb[decimation] -: OUT_WIDTH])
+		                                  + comb_data[STAGES][msb[decimation] - OUT_WIDTH];
+
+		assign out_data = (rounded > MAX_OUT) ? MAX_OUT :
+		                  (rounded < MIN_OUT) ? MIN_OUT :
+						  rounded[OUT_WIDTH-1:0];
 	end
 endgenerate
 

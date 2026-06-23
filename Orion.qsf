@@ -231,7 +231,7 @@ set_location_assignment PIN_AF27 -to atu_ctrl
 set_global_assignment -name ENABLE_OCT_DONE OFF
 set_global_assignment -name ENABLE_CONFIGURATION_PINS OFF
 set_global_assignment -name ENABLE_BOOT_SEL_PIN OFF
-set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
+set_global_assignment -name OPTIMIZATION_MODE "HIGH POWER EFFORT"
 set_global_assignment -name ALLOW_REGISTER_RETIMING OFF
 set_global_assignment -name POWER_USE_TA_VALUE 17
 set_global_assignment -name POWER_USE_DEVICE_CHARACTERISTICS MAXIMUM
@@ -301,15 +301,15 @@ set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[1]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN[0]
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTEN_SELECT
 set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_CLK
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_DATA
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_LE
-set_instance_assignment -name CURRENT_STRENGTH_NEW 4MA -to TX_ATTN_MODE
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to TX_ATTN_DATA
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to TX_ATTN_LE
+set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to TX_ATTN_MODE
 
 # Drive strength assignments for pins previously using default (Warning 15714 cleanup)
 
 # Additional drive strength for remaining user-facing output pins
 
-set_location_assignment PIN_W3 -to RAM_A0
+set_location_assignment PIN_P1 -to RAM_A0
 # Yurij eu2av - ASMI.v device family updated from Cyclone IV GX to Cyclone IV E - 2026-06-09
 # Yurij eu2av - ASMI.qip updated with correct IP metadata - 2026-06-09
 

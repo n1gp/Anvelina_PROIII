@@ -94,6 +94,10 @@
     Fixed a typo: I mult_trunc → Imult_trunc (removed extra space).
     Updated comments - they now correctly describe the rounding scheme.
     Fixed the module instance in fir256b/c/d - from firromHa to firromHb/c/d.
+2026 Jun 14 - (eu2av-Yurij) - Widened final accumulator Racc/Iacc to 26 bits
+    (ABITS+2) so the sum of four 24-bit sub-filter outputs cannot wrap.
+    Added sign-extension wires for the sub-filter outputs and hard saturation
+    on y_real/y_imag to prevent overload wrap-around.
 */
 
 
@@ -119,23 +123,38 @@ module firX2R2 (
 	
    reg  [ADDRBITS-1:0] waddr, raddr;               // write sample memory address
    wire weA, weB, weC, weD;
-   reg  signed [ABITS-1:0] Racc, Iacc;
+   // Accumulator is widened to 26 bits (ABITS+2) so the sum of four 24-bit
+   // sub-filter outputs cannot wrap internally.  The final 24-bit output is
+   // saturated back to the required width.
+   reg  signed [ABITS+2:0] Racc, Iacc;
    wire signed [ABITS-1:0] RaccAa, RaccBa, RaccAb, RaccBb;
-   wire signed [ABITS-1:0] IaccAa, IaccBa, IaccAb, IaccBb;	
-	
-   // Output is the result of adding 2 by 24 bit results so Racc and Iacc need to be 
-   // 24 + log2(2) = 24 + 1 = 25 bits wide to prevent DC spur.
-   // However, since we decimate by 2 the output will be 1/2 the input. Hence we 
-   // use 24 bits for the Accumulators. 
+   wire signed [ABITS-1:0] IaccAa, IaccBa, IaccAb, IaccBb;
 
-   assign y_real = Racc[ABITS-1:0];  
-   assign y_imag = Iacc[ABITS-1:0];
+   // Sign-extend the 24-bit sub-filter outputs to the 26-bit accumulator width.
+   wire signed [ABITS+2:0] RaccAa_ext = {{3{RaccAa[ABITS-1]}}, RaccAa};
+   wire signed [ABITS+2:0] RaccAb_ext = {{3{RaccAb[ABITS-1]}}, RaccAb};
+   wire signed [ABITS+2:0] RaccBa_ext = {{3{RaccBa[ABITS-1]}}, RaccBa};
+   wire signed [ABITS+2:0] RaccBb_ext = {{3{RaccBb[ABITS-1]}}, RaccBb};
+   wire signed [ABITS+2:0] IaccAa_ext = {{3{IaccAa[ABITS-1]}}, IaccAa};
+   wire signed [ABITS+2:0] IaccAb_ext = {{3{IaccAb[ABITS-1]}}, IaccAb};
+   wire signed [ABITS+2:0] IaccBa_ext = {{3{IaccBa[ABITS-1]}}, IaccBa};
+   wire signed [ABITS+2:0] IaccBb_ext = {{3{IaccBb[ABITS-1]}}, IaccBb};
+
+   localparam signed [ABITS-1:0] MAX_24 = 24'sd8388607;  //  2^23 - 1
+   localparam signed [ABITS-1:0] MIN_24 = 24'sh800000;   // -2^23
+
+   assign y_real = (Racc > MAX_24) ? MAX_24 :
+                   (Racc < MIN_24) ? MIN_24 : Racc[ABITS-1:0];
+   assign y_imag = (Iacc > MAX_24) ? MAX_24 :
+                   (Iacc < MIN_24) ? MIN_24 : Iacc[ABITS-1:0];
 	
    initial
    begin
       wstate = 0;
       waddr = 0;
       raddr = 0;
+      Racc  = 0;
+      Iacc  = 0;
    end
 	
    always @(posedge clock)
@@ -161,12 +180,12 @@ module firX2R2 (
             wstate <= wstate + 1'd1;
             case (wstate)
                0: begin                                          // wait for the first x input
-                     Racc <= RaccAa + RaccAb;            // add accumulators from 'a' and 'b' FIRs
-                     Iacc <= IaccAa + IaccAb;
+                     Racc <= RaccAa_ext + RaccAb_ext;    // add accumulators from 'a' and 'b' FIRs
+                     Iacc <= IaccAa_ext + IaccAb_ext;
                   end
                1: begin                                          // wait for the next x input
-                     Racc <= Racc + RaccBa + RaccBb;		
-                     Iacc <= Iacc + IaccBa + IaccBb;
+                     Racc <= Racc + RaccBa_ext + RaccBb_ext;
+                     Iacc <= Iacc + IaccBa_ext + IaccBb_ext;
                   end
             endcase
          end

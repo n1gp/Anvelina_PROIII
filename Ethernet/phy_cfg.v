@@ -84,7 +84,7 @@ always @(posedge clock) begin
         is_9031 <= 1'b0;
         values[8] <= 16'h0200; // Allow 1GB but don't advertise half duplex in 1000BASET
         values[7] <= 16'h8104;
-        values[6] <= 16'h44c7; // RGMII Clock and Control Pad Skew
+        values[6] <= 16'h85b7; // RGMII Clock and Control Pad Skew
         values[5] <= 16'h8105;
         values[4] <= 16'h5555; // RGMII RX Data Pad Skew
         values[3] <= 16'h8106;
@@ -121,7 +121,7 @@ always @(posedge clock) begin
         values[5] <= 16'h0002;
         values[4] <= 16'h0008;
         values[3] <= 16'h4002;
-        values[2] <= 16'b0000_00_11110_00011; // RGMII Clock Pad Skew TX 5bits RX 5bits
+        values[2] <= 16'b0000_00_01111_01010; // RGMII Clock Pad Skew TX 5bits RX 5bits
         values[1] <= 16'h1300; // Restart autonegotiation
         values[0] <= 16'h0000; // BMCR: 0 = normal mode (auto-negotiations have already been launched through
         addresses[18] <= 9;
