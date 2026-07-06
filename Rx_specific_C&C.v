@@ -134,19 +134,36 @@ localparam
 			
 reg [31:0] sequence_number;
 reg [31:0] last_sequence_number;
-reg [31:0] expected_sequence_number;
 reg [10:0] byte_number;
 reg [15:0] tmpRxSampleRate[0:NR-1];
 integer j;
 
 reg state;
 
+// Yurij-eu2av - 2026-06-26 (Sol A+B+C): robust sequence-error gating.
+//   A — last_sequence_number is poisoned (0xFFFFFFFF) on every (re)start, so the
+//       first comparison after a run never sees a stale value from the previous
+//       session.
+//   B — seq_locked decouples sequence validity from run. A backward jump
+//       (Thetis restarts seq at 0 on reconnect) re-arms the grace window instead
+//       of counting a false error, even while run stays 1.
+//   C — seq_grace absorbs the first GRACE_LIMIT packets of every (re)start,
+//       hiding connect/reconnect transients.
+localparam [2:0] GRACE_LIMIT = 3'd3;
+reg        seq_locked;
+reg [2:0]  seq_grace;
 			
 always @(posedge clock)
 
 begin
-  if (!run)
+  if (!run) begin
 	sequence_errors <= 32'd0;
+	// Yurij-eu2av - 2026-06-26 (Sol A): poison last_sequence_number so the first
+	// comparison after a (re)start can never match a stale value.
+	last_sequence_number <= 32'hFFFFFFFF;
+	seq_locked <= 1'b0;          // Yurij-eu2av - 2026-06-26 (Sol B)
+	seq_grace  <= GRACE_LIMIT;   // Yurij-eu2av - 2026-06-26 (Sol C)
+  end
 
   if (udp_rx_active && to_port == Rx_Specific_port)	// default is port 1025
     case (state)
@@ -166,13 +183,30 @@ begin
 					2: sequence_number[15:8] <= udp_rx_data;
 					3: sequence_number[7:0] <= udp_rx_data;
 					// 4:	number of ADCs
-					4: expected_sequence_number <= last_sequence_number + 1'b1;
-					5: begin
-						if (sequence_number != expected_sequence_number)
+					4: begin
+						// Yurij-eu2av - 2026-06-26 (Sol A+B+C): robust sequence-error gating.
+						//  B) A backward jump (seq < last) means Thetis restarted seq at 0 on a
+						//     reconnect while run stayed 1 — re-arm the grace window instead of
+						//     counting a false error.
+						//  C) While seq_locked is 0 (grace window open) we swallow the error and
+						//     decrement seq_grace; once seq_grace reaches 1, seq_locked is set
+						//     and normal monotonicity checking resumes.
+						if (sequence_number < last_sequence_number) begin
+							seq_grace  <= GRACE_LIMIT;
+							seq_locked <= 1'b0;
+						end
+						else if (!seq_locked) begin
+							// C) swallow the first GRACE_LIMIT packets after (re)start
+							seq_grace <= seq_grace - 3'd1;
+							if (seq_grace == 3'd1)
+								seq_locked <= 1'b1;
+						end
+						else if (sequence_number != last_sequence_number + 1'b1) begin
 							sequence_errors <= sequence_errors + 1'b1;
+						end
 						last_sequence_number <= sequence_number;
-						dither <= udp_rx_data;
-					   end
+					end
+					5: dither 	<= udp_rx_data;
 					6: random	<= udp_rx_data;
 					7: EnableRx0_7	<= udp_rx_data; 
 					8: EnableRx8_15	<= udp_rx_data; 

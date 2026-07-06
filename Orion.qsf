@@ -309,7 +309,7 @@ set_instance_assignment -name CURRENT_STRENGTH_NEW "MINIMUM CURRENT" -to TX_ATTN
 
 # Additional drive strength for remaining user-facing output pins
 
-set_location_assignment PIN_P1 -to RAM_A0
+set_location_assignment PIN_R3 -to RAM_A0
 # Yurij eu2av - ASMI.v device family updated from Cyclone IV GX to Cyclone IV E - 2026-06-09
 # Yurij eu2av - ASMI.qip updated with correct IP metadata - 2026-06-09
 
@@ -328,7 +328,7 @@ set_global_assignment -name MESSAGE_DISABLE 176598
 
 
 
-set_location_assignment PIN_AB3 -to RAM_A5
+set_location_assignment PIN_W3 -to RAM_A5
 set_global_assignment -name VERILOG_FILE tPDF_dither.v
 set_global_assignment -name QIP_FILE Ethernet/Rx_fifo.qip
 set_global_assignment -name MIF_FILE sine_256.mif
@@ -419,5 +419,6 @@ set_global_assignment -name VERILOG_FILE High_Priority_CC.v
 set_global_assignment -name VERILOG_FILE General_CC.v
 set_global_assignment -name VERILOG_FILE tx_atten.v
 set_global_assignment -name VERILOG_FILE tx_dac.v
+
 
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

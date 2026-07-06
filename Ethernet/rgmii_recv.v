@@ -34,38 +34,25 @@ module rgmii_recv (
 //-----------------------------------------------------------------------------
 //          de-multiplex nibbles presented at both clock edges
 //-----------------------------------------------------------------------------
-wire       rxdv_wire, error;
+wire       rxdv_wire;
 wire [7:0] data_wire;
-reg speed_1gb;
-assign speed_1gb = 1'b1;
+wire       rx_er_unused;   // RX_ER (receive error) from PHY — unused, gigabit path only
 
 ddio_in ddio_in_inst (
   .datain   ({PHY_DV, PHY_RX}           ),
   .inclock  (clock                      ),
   .dataout_l({rxdv_wire, data_wire[3:0]}),
-  .dataout_h({error, data_wire[7:4]}    )
+  .dataout_h({rx_er_unused, data_wire[7:4]})
 );
 
 
-
-// Realign data for two cases of divided clock when 100 Mbs
-
-reg [4:0] realigned_l = 'h0;
-reg       data_coming = 'b0;
-reg       realign     = 'b0;
+// Yurij eu2av - 2026-06-27: Removed dead 100Mbit realign logic. The design is
+// gigabit-only (speed_1gb was tied to 1), so the entire realigned_l/realign
+// block for 100Mbit speed never executed and was synthesized away anyway.
+reg data_coming = 'b0;
 
 always @(posedge clock) begin
-  realigned_l <= {error, data_wire[7:4]};
-  if (realign) {data_coming,data} <= {realigned_l[4] & ~reset,data_wire[3:0],realigned_l[3:0]};
-  else {data_coming,data} <= {rxdv_wire & ~reset,data_wire};
-end
-
-always @(posedge clock) begin
-  if (~speed_1gb) begin
-    if (~realign & error & ~rxdv_wire) realign <= 1'b1;
-    else if (realign & rxdv_wire & ~realigned_l[4]) realign <= 1'b0;
-  end else
-  realign <= 1'b0;
+  {data_coming,data} <= {rxdv_wire & ~reset, data_wire};
 end
 
 

@@ -112,17 +112,29 @@ localparam
 			
 reg [31:0] sequence_number;
 reg [31:0] last_sequence_number;
-reg [31:0] expected_sequence_number;
 reg [10:0] byte_number;
 reg state;
 
+// Yurij-eu2av - 2026-06-26 (Sol A+B+C): robust sequence-error gating.
+//   A — last_sequence_number is poisoned (0xFFFFFFFF) on every (re)start, so the
+//       first comparison after a run never sees a stale value from the previous
+//       session.
+//   B — seq_locked decouples sequence validity from run. It is set only after the
+//       grace window closes. A large backward jump (Thetis reconnect within the
+//       ~2s HW_timeout window restarts seq at 0 while run stays 1) re-arms the
+//       grace window instead of counting a false error.
+//   C — seq_grace absorbs the first GRACE_LIMIT packets of every (re)start,
+//       hiding connect/reconnect transients.
+localparam [2:0] GRACE_LIMIT = 3'd3;
+reg        seq_locked;
+reg [2:0]  seq_grace;
 
 reg [31:0]temp_Rx_frequency[0:NR-1];
 reg [47:0]temp_Alex_data;
 reg [15:0]temp_Alex_Tx_data;
-reg [31:0]temp_Tx0_frequency;  // Yurij eu2av - 2026-06-09: Pipeline register for Tx0_frequency
-reg [15:0]to_port_pipe;        // Yurij eu2av - 2026-06-09: Pipeline to_port to break critical path from udp_recv|to_port
-reg [15:0]High_Priority_from_PC_port_pipe; // Yurij eu2av - 2026-06-09: Pipeline to break critical path from General_CC|High_Priority_from_PC_port
+reg [31:0]temp_Tx0_frequency;  // Yurij-eu2av - 2026-06-09: Pipeline register for Tx0_frequency
+reg [15:0]to_port_pipe;        // Yurij-eu2av - 2026-06-09: Pipeline to_port to break critical path from udp_recv|to_port
+reg [15:0]High_Priority_from_PC_port_pipe; // Yurij-eu2av - 2026-06-09: Pipeline to break critical path from General_CC|High_Priority_from_PC_port
 
 always @(posedge clock)
     to_port_pipe <= to_port;
@@ -153,13 +165,22 @@ endgenerate
 
 always @(posedge clock)
 begin
-  if (!run)
+  if (!run) begin
 	sequence_errors <= 32'd0;
+	// Yurij-eu2av - 2026-06-26 (Sol A): poison last_sequence_number so the first
+	// comparison after a (re)start can never match a stale value.
+	last_sequence_number <= 32'hFFFFFFFF;
+	seq_locked <= 1'b0;          // Yurij-eu2av - 2026-06-26 (Sol B)
+	seq_grace  <= GRACE_LIMIT;   // Yurij-eu2av - 2026-06-26 (Sol C)
+  end
 
   if(HW_timeout)
 	begin
 	   run <= 1'b0;		// reset run if HW timeout
 	   PC_PTT <= 1'b0;
+	   last_sequence_number <= 32'hFFFFFFFF;  // Yurij-eu2av - 2026-06-26 (Sol A)
+	   seq_locked <= 1'b0;                    // Yurij-eu2av - 2026-06-26 (Sol B)
+	   seq_grace  <= GRACE_LIMIT;             // Yurij-eu2av - 2026-06-26 (Sol C)
 	end
 
   else if (udp_rx_active && to_port_pipe == High_Priority_from_PC_port_pipe)	// default port is 1027
@@ -186,12 +207,32 @@ begin
 							run <= udp_rx_data[0];
 							PC_PTT <= udp_rx_data[1]; //PTT0
 							// 2-4 = PTT1-PTT3
-							expected_sequence_number <= last_sequence_number + 1'b1;
+							// Yurij-eu2av - 2026-06-26 (Sol A+B+C): robust sequence-error gating.
+							//  B) Detect a backward sequence jump (seq < last): Thetis restarts
+							//     seq at 0 on every connect. While run stays 1 across a fast
+							//     reconnect (< HW_timeout window), the old first_pkt fix still
+							//     counted a false error. A backward jump re-arms the grace
+							//     window instead.
+							//  C) While seq_locked is 0 (grace window open) we swallow the error
+							//     and decrement seq_grace; once seq_grace reaches 1, seq_locked is
+							//     set and normal monotonicity checking resumes.
+							if (sequence_number < last_sequence_number) begin
+								// reconnect/reset -> re-arm grace window
+								seq_grace  <= GRACE_LIMIT;
+								seq_locked <= 1'b0;
+							end
+							else if (!seq_locked) begin
+								// C) swallow the first GRACE_LIMIT packets after (re)start
+								seq_grace <= seq_grace - 3'd1;
+								if (seq_grace == 3'd1)
+									seq_locked <= 1'b1;  // window closes after this packet
+							end
+							else if (sequence_number != last_sequence_number + 1'b1) begin
+								sequence_errors <= sequence_errors + 1'b1;
+							end
+							last_sequence_number <= sequence_number;
 						   end
 						5: begin
-							if (sequence_number != expected_sequence_number)
-								sequence_errors <= sequence_errors + 1'b1;
-							last_sequence_number <= sequence_number;
 							CWX  <= udp_rx_data[0];
 							Dot  <= udp_rx_data[1]; 
 							Dash <= udp_rx_data[2]; 

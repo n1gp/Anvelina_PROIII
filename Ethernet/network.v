@@ -422,8 +422,8 @@ assign udp_rx_data = rx_data;
 
 // Pipeline register to break critical combinational path to C&C modules
 always @(posedge rx_clock) begin
-	udp_rx_active_pipe <= udp_rx_active;
-	udp_rx_data_pipe   <= udp_rx_data;
+       udp_rx_active_pipe <= udp_rx_active;
+       udp_rx_data_pipe   <= udp_rx_data;
 end
 
 //arp in

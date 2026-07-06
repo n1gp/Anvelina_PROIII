@@ -29,14 +29,14 @@
 //=============================================================================
 // REVISION HISTORY - Anvelina PRO III (Orion MK2)
 //=============================================================================
-// Yurij eu2av - 2026-06-09
+// Yurij-eu2av - 2026-06-09
 // - Updated ASMI IP device family from Cyclone IV GX to Cyclone IV E
 //   (fixes Warning 169180 clamping diode on internal DATA0 pin)
-// Yurij eu2av - 2026-06-09
+// Yurij-eu2av - 2026-06-09
 // - Added pipeline register C122_cordic_i_out_pipe on _122_90 clock to break
 //   critical cross-clock path from CORDIC (C122_clk) to temp_DACD.
 //   Improves setup slack for PLL_IF.c0 (122.88 MHz DAC) domain.
-// Yurij eu2av - 2026-06-09
+// Yurij-eu2av - 2026-06-09
 // - PSA switching stability fixes:
 //   * Added cold-boot qualification: ps = C122_run ? (C122_RxADC[1]==2) : 0
 //     to prevent random PSA state at power-up before system sync.
@@ -47,8 +47,12 @@
 //     register expected_sequence_number in High_Priority_CC.v and
 //     Rx_specific_C&C.v; removed broken CDC to CBCLK (cdc_sync for 32-bit
 //     counters caused random glitches).
+//     [SUPERSEDED 2026-06-26] The expected_sequence_number register was a
+//     pipeline anti-pattern: it lagged the comparison by one packet, so
+//     every good packet was falsely counted as a sequence error. Reverted
+//     to a direct combinational comparison against (last_sequence_number + 1).
 //   * Replaced cdc_sync_ALL for sequence_errors sum with cdc_mcp handshake.
-// Yurij eu2av - 2026-06-09
+// Yurij-eu2av - 2026-06-09
 // - SDC audit fixes: LTC2208_122MHz_2 merged into same clock group (both ADCs
 //   share same source via dual-channel driver). Removed false_path between them.
 // - Updated ASMI constraint names (sd2~ -> cycloneii_asmiblock2~) and restored.
@@ -57,14 +61,29 @@
 //   critical path udp_recv|to_port -> Tx0_frequency.
 // - Restored != 16'd0 check in Rx_specific_C&C.v for RxSampleRate with
 //   pipeline register expected_sequence_number to keep timing clean.
+//     [SUPERSEDED 2026-06-26] expected_sequence_number removed — see note above.
 // - Added to_port_pipe pipeline register in High_Priority_CC.v to break
 //   critical path from udp_recv|to_port to temp_Rx_frequency/temp_Tx0_frequency.
-// Yurij eu2av - 2026-06-14
+// Yurij-eu2av - 2026-06-14
 // - Receiver DSP path fixes (see receiver2.v / cic.v / firx2r2.v / cic_comb.v):
 //   * CIC outputs now use round-half-up + saturation.
 //   * Polyphase FIR accumulator widened to 26 bits with output saturation.
 //   * Dead cic_comp module removed.
 //   * sample_rate (rate0/rate1) registered in receiver2.v to close timing.
+// Yurij-eu2av - 2026-06-26
+// - Fixed false sequence-error counting in High_Priority_CC.v and
+//   Rx_specific_C&C.v. Three-layer fix (Solutions A+B+C):
+//   A) Poison last_sequence_number (0xFFFFFFFF) on every (re)start so the first
+//      comparison never matches a stale value from the previous session.
+//   B) seq_locked decouples sequence validity from run. A backward seq jump
+//      (Thetis restarts seq at 0 on a fast reconnect, while run stays 1 inside
+//      the ~2s HW_timeout window) re-arms the grace window instead of counting
+//      a false error.
+//   C) seq_grace absorbs the first GRACE_LIMIT (3) packets of every (re)start,
+//      hiding connect/reconnect transients. After the window closes, normal
+//      monotonicity checking resumes. Original root cause: the 2026-06-09
+//      expected_sequence_number pipeline register lagged the comparison by one
+//      packet and counted every good packet as an error.
 //=============================================================================
 
 /*
@@ -693,6 +712,21 @@
 			* Polyphase FIR accumulator widened to 26 bits with output saturation.
 			* Dead cic_comp module removed.
 			* sample_rate (rate0/rate1) registered in receiver2.v to close timing.
+
+2026	Jun 26 -(eu2av)
+			Fixed false sequence-error counting in High_Priority_CC.v and
+			  Rx_specific_C&C.v. Three-layer fix (Solutions A+B+C):
+			  A) Poison last_sequence_number (0xFFFFFFFF) on every (re)start so the first
+			    comparison never matches a stale value from the previous session.
+			  B) seq_locked decouples sequence validity from run. A backward seq jump
+			    (Thetis restarts seq at 0 on a fast reconnect, while run stays 1 inside
+			    the ~2s HW_timeout window) re-arms the grace window instead of counting
+			    a false error.
+			  C) seq_grace absorbs the first GRACE_LIMIT (3) packets of every (re)start,
+			    hiding connect/reconnect transients. After the window closes, normal
+			    monotonicity checking resumes. Original root cause: the 2026-06-09
+			    expected_sequence_number pipeline register lagged the comparison by one
+			    packet and counted every good packet as an error.
 */
 
 module Orion(
@@ -868,7 +902,7 @@ module Orion(
   //output wire RAM_A13  
 );
 
-// Refactored by Yurij eu2av: named constants for repeated magic numbers
+// Refactored by Yurij-eu2av: named constants for repeated magic numbers
 localparam OFFSET_BINARY_HALF   = 16'd32768;
 localparam FULLSCALE_16BIT      = 17'd65536;
 localparam CLIP_MAX_17BIT       = 17'd65535;
@@ -888,12 +922,12 @@ assign USEROUT8 = run ? Open_Collector_Anvelina_DX[2] : 1'b0;
 assign USEROUT9 = run ? Open_Collector_Anvelina_DX[3] : 1'b0;
 assign USEROUT10 = run ? Open_Collector_Anvelina_DX[4] : 1'b0;    
 
-assign RAM_A0  = fifo_ready[0]; // Yurij eu2av: debug tap - Rx0 FIFO ready (was tied to 0)
+assign RAM_A0  = fifo_ready[0]; // Yurij-eu2av: debug tap - Rx0 FIFO ready (was tied to 0)
 //assign RAM_A1  = 0;
 //assign RAM_A2  = 0;
 //assign RAM_A3  = 0;
 //assign RAM_A4  = 0;
-assign RAM_A5  = FPGA_PTT; // Yurij eu2av: debug tap - PTT state (was tied to 0)
+assign RAM_A5  = FPGA_PTT; // Yurij-eu2av: debug tap - PTT state (was tied to 0)
 //assign RAM_A6  = 0;
 //assign RAM_A7  = 0;
 //assign RAM_A8  = 0;
@@ -965,13 +999,13 @@ always @ (posedge rx_clock)
 begin
 	if (HW_timer_enable) begin
 		if (timer_reset) sec_count <= 28'b0;
-		else if (sec_count < HW_TIMEOUT_COUNT) 	// approx 2 secs. // Yurij eu2av
+		else if (sec_count < HW_TIMEOUT_COUNT) 	// approx 2 secs. // Yurij-eu2av
 			sec_count <= sec_count + 28'b1;
 	end
 	else sec_count <= 28'd0;
 end
 
- assign HW_timeout = (sec_count >= HW_TIMEOUT_COUNT) ? 1'd1 : 1'd0; // Yurij eu2av
+ assign HW_timeout = (sec_count >= HW_TIMEOUT_COUNT) ? 1'd1 : 1'd0; // Yurij-eu2av
 
 
 //---------------------------------------------------------
@@ -1099,8 +1133,8 @@ wire discovery_ACK_sync;
 sdr_receive sdr_receive_inst(
 	//inputs 
 	.rx_clock(rx_clock),
-	.udp_rx_data(udp_rx_data_pipe),
-	.udp_rx_active(udp_rx_active_pipe),
+	.udp_rx_data(udp_rx_data),
+	.udp_rx_active(udp_rx_active),
 	.sending_sync(sending_sync),
 	.broadcast(broadcast),
 	.erase_ACK(busy),						// set when erase is in progress
@@ -1147,9 +1181,9 @@ wire [15:0]sdr_send_port;
 wire [7:0]Mic_data;
 wire mic_fifo_rdreq;
 wire [8:0]Rx_data[0:NR-1];
-reg fifo_ready[0:NR-1]; // Yurij eu2av
+reg fifo_ready[0:NR-1]; // Yurij-eu2av
 wire fifo_rdreq[0:NR-1];
-reg [15:0] checksum; // Yurij eu2av
+reg [15:0] checksum; // Yurij-eu2av
 
 sdr_send #(board_type, NR, master_clock, protocol_version) sdr_send_inst(
 	//inputs
@@ -1220,7 +1254,7 @@ genvar j;
 for (j = 0 ; j < NR; j++)
 	begin:q
 
-		// Refactored by Yurij eu2av: combinational logic must use blocking assignments
+		// Refactored by Yurij-eu2av: combinational logic must use blocking assignments
 		always @ (*)
 		begin 
 			samples_per_frame[j] = 16'd238;
@@ -1288,12 +1322,12 @@ cdc_sync #(8) C122_EnableRx0_7_sync  (.siga(EnableRx0_7), .rstb(C122_rst), .clkb
 		Rx_fifo_ctrl #(NR) Rx0_fifo_ctrl_inst( .reset(!C122_run || !C122_EnableRx0_7[0] ), .clock(C122_clk), .data_in_I(rx_I[1]), .data_in_Q(rx_Q[1]),
 							.spd_rdy(strobe[0]), .spd_rdy2(strobe[1]), .spd_rdy3(strobe[NR]), .fifo_full(Rx_fifo_full[0]), .data_in_IDAC(rx_I[NR]), .data_in_QDAC(rx_Q[NR]),
 							.wrenable(Rx_fifo_wreq[0]), .data_out(Rx_fifo_data[0]), .fifo_clear(Rx_fifo_clr[0]),
-							.Sync_data_in_I(rx_I[0]), .Sync_data_in_Q(rx_Q[0]), .Sync(C122_SyncRx[0][1]), .ps(C122_run ? (C122_RxADC[1] == 8'd2) : 1'b0) // Yurij eu2av: Cold boot PSA init fix
+							.Sync_data_in_I(rx_I[0]), .Sync_data_in_Q(rx_Q[0]), .Sync(C122_SyncRx[0][1]), .ps(C122_run ? (C122_RxADC[1] == 8'd2) : 1'b0) // Yurij-eu2av: Cold boot PSA init fix
 							);
 
-		// Refactored by Yurij eu2av
+		// Refactored by Yurij-eu2av
 		always @ (posedge tx_clock) begin
-			fifo_ready[0] <= (Rx_used[0] > FIFO_READY_THRESHOLD) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC // Yurij eu2av
+			fifo_ready[0] <= (Rx_used[0] > FIFO_READY_THRESHOLD) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC // Yurij-eu2av
 			//fifo_ready[0] <= (Rx_used[0] > 12'd1427) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
 		end
 													
@@ -1319,9 +1353,9 @@ for (d = 1 ; d < NR; d++)
 							.wrenable(Rx_fifo_wreq[d]), .data_out(Rx_fifo_data[d]), .fifo_clear(Rx_fifo_clr[d]),
 							.Sync_data_in_I(rx_I[d]), .Sync_data_in_Q(rx_Q[d]), .Sync(1'b0));
 													
-		// Refactored by Yurij eu2av
+		// Refactored by Yurij-eu2av
 		always @ (posedge tx_clock) begin
-			fifo_ready[d] <= (Rx_used[d] > FIFO_READY_THRESHOLD) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC // Yurij eu2av
+			fifo_ready[d] <= (Rx_used[d] > FIFO_READY_THRESHOLD) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC // Yurij-eu2av
 			//fifo_ready[d] <= (Rx_used[d] > 12'd1427) ? 1'b1 : 1'b0;  // used to signal that fifo has enough data to send to PC
 		end
 
@@ -1537,14 +1571,14 @@ byte_to_32bits Audio_byte_to_32bits_inst
 			
 // select sidetone when CW key active and sidetone_level is not zero else Rx audio.
 reg [31:0] Rx_audio;
-reg [33:0] Mixed_audio; // Yurij eu2av: procedural assignment requires reg type
-reg signed [31:0] Mixed_LR; // Yurij eu2av: procedural assignment requires reg type
-reg signed [15:0] Mixed_side; // Yurij eu2av: procedural assignment requires reg type
+reg [33:0] Mixed_audio; // Yurij-eu2av: procedural assignment requires reg type
+reg signed [31:0] Mixed_LR; // Yurij-eu2av: procedural assignment requires reg type
+reg signed [15:0] Mixed_side; // Yurij-eu2av: procedural assignment requires reg type
 reg [5:0] Mix_count = 6'd0;
-wire signed [16:0] audio_L_temp; // Yurij eu2av
-wire signed [16:0] audio_R_temp; // Yurij eu2av
+wire signed [16:0] audio_L_temp; // Yurij-eu2av
+wire signed [16:0] audio_R_temp; // Yurij-eu2av
 
-// Refactored by Yurij eu2av: combinational derivation of signed audio samples
+// Refactored by Yurij-eu2av: combinational derivation of signed audio samples
 assign audio_L_temp = Mixed_audio[33:17] - 17'd32768;
 assign audio_R_temp = Mixed_audio[16:0] - 17'd32768;
 
@@ -1555,25 +1589,25 @@ begin
     case (Mix_count)
         56:
         begin
-            Mixed_side <= (prof_sidetone + OFFSET_BINARY_HALF) >> 1; // Yurij eu2av
-            Mixed_LR[31:16] <= (LR_data[31:16] + OFFSET_BINARY_HALF) >> 1; // Yurij eu2av
-            Mixed_LR[15:0] <= (LR_data[15:0] + OFFSET_BINARY_HALF) >> 1; // Yurij eu2av
+            Mixed_side <= (prof_sidetone + OFFSET_BINARY_HALF) >> 1; // Yurij-eu2av
+            Mixed_LR[31:16] <= (LR_data[31:16] + OFFSET_BINARY_HALF) >> 1; // Yurij-eu2av
+            Mixed_LR[15:0] <= (LR_data[15:0] + OFFSET_BINARY_HALF) >> 1; // Yurij-eu2av
         end
 
         58:
         begin
-            Mixed_audio[33:17] <= 16'((Mixed_LR[31:16] + Mixed_side) - (Mixed_LR[31:16] * Mixed_side / FULLSCALE_16BIT));  //eu2av - 06/05/2025/ - bug fixes // Yurij eu2av
-            Mixed_audio[16:0]  <= 16'((Mixed_LR[15:0]  + Mixed_side) - (Mixed_LR[15:0]  * Mixed_side / FULLSCALE_16BIT));  //eu2av - 06/05/2025/ - bug fixes // Yurij eu2av
+            Mixed_audio[33:17] <= 16'((Mixed_LR[31:16] + Mixed_side) - (Mixed_LR[31:16] * Mixed_side / FULLSCALE_16BIT));  //eu2av - 06/05/2025/ - bug fixes // Yurij-eu2av
+            Mixed_audio[16:0]  <= 16'((Mixed_LR[15:0]  + Mixed_side) - (Mixed_LR[15:0]  * Mixed_side / FULLSCALE_16BIT));  //eu2av - 06/05/2025/ - bug fixes // Yurij-eu2av
 			  //Mixed_audio[33:17] <= (Mixed_LR[31:16] + Mixed_side) - (Mixed_LR[31:16] * Mixed_side / 17'd65536);
            //Mixed_audio[16:0]  <= (Mixed_LR[15:0]  + Mixed_side) - (Mixed_LR[15:0]  * Mixed_side / 17'd65536);
         end
 
         60:
         begin
-            if (Mixed_audio[33:17] == FULLSCALE_16BIT) // Yurij eu2av
-                Mixed_audio[33:17] <= CLIP_MAX_17BIT; // Yurij eu2av
-            if (Mixed_audio[16:0] == FULLSCALE_16BIT) // Yurij eu2av
-                Mixed_audio[16:0] <= CLIP_MAX_17BIT; // Yurij eu2av
+            if (Mixed_audio[33:17] == FULLSCALE_16BIT) // Yurij-eu2av
+                Mixed_audio[33:17] <= CLIP_MAX_17BIT; // Yurij-eu2av
+            if (Mixed_audio[16:0] == FULLSCALE_16BIT) // Yurij-eu2av
+                Mixed_audio[16:0] <= CLIP_MAX_17BIT; // Yurij-eu2av
         end
 
         62:
@@ -1582,8 +1616,8 @@ begin
             begin
                 if (break_in)
                 begin
-                    Rx_audio[31:16] <= audio_L_temp[15:0]; // Yurij eu2av
-                    Rx_audio[15:0] <= audio_R_temp[15:0]; // Yurij eu2av
+                    Rx_audio[31:16] <= audio_L_temp[15:0]; // Yurij-eu2av
+                    Rx_audio[15:0] <= audio_R_temp[15:0]; // Yurij-eu2av
                 end
                 else
                     Rx_audio <= {prof_sidetone, prof_sidetone};
@@ -1591,7 +1625,7 @@ begin
             else
                 Rx_audio <= LR_data;
         end
-        default: ; // Yurij eu2av: explicit default for Mix_count case
+        default: ; // Yurij-eu2av: explicit default for Mix_count case
     endcase
 end
 
@@ -1742,7 +1776,7 @@ sidetone sidetone_inst( .clock(CLRCLK), .enable(sidetone), .tone_freq(tone_freq)
  
 */
 
-reg [15:0]temp_ADC[0:1];
+reg [15:0] temp_ADC[0:1];
 reg [15:0] temp_DACD;
 //==============================================================================
 //eu2av - [PureSignal Feedback Path - Option 2: Adaptive Scaling] 05/05/2026
@@ -1988,9 +2022,6 @@ assign SPI_SCK = Alex_SPI_SCK;		// and clock for serial data transfer
 assign J15_5   = SPI_RX_LOAD;			// Alex Rx_load or Apollo Reset
 assign J15_6   = SPI_TX_LOAD;      // Alex Tx_load or Apollo Enable 
 
-
-	
-				   
 //---------------------------------------------------------
 //                 Transmitter code 
 //---------------------------------------------------------	
@@ -2052,7 +2083,7 @@ cpl_cordic # (.IN_WIDTH(17))
 
 always @ (posedge _122_90)
 begin
- 	   DACD <= debounce_IO5 ? (OFFSET_BINARY_HALF + temp_DACD) : 16'b0; 				// convert to 16-bit offset binary format and assign to DACD // Yurij eu2av
+ 	   DACD <= debounce_IO5 ? (OFFSET_BINARY_HALF + temp_DACD) : 16'b0; 				// convert to 16-bit offset binary format and assign to DACD // Yurij-eu2av
 		//DACD <= {C122_cordic_i_out[22], ~C122_cordic_i_out[21:7]};  // convert top 16-bits to offset binary for TxDAC
 end
 
@@ -2231,7 +2262,7 @@ General_CC #(1024) General_CC_inst // parameter is port number  ***** this data 
 				.udp_rx_active(udp_rx_active_pipe),
 				.udp_rx_data(udp_rx_data_pipe),
 				// outputs
-			   .Rx_Specific_port(Rx_Specific_port),
+				.Rx_Specific_port(Rx_Specific_port),
 				.Tx_Specific_port(Tx_Specific_port),
 				.High_Priority_from_PC_port(High_Priority_from_PC_port),
 				.High_Priority_to_PC_port(High_Priority_to_PC_port),			
@@ -2396,9 +2427,6 @@ wire  [47:0] SPI_Alex_data;
 //cdc_sync #(48) SPI_Alex (.siga(runsafe_Alex_data), .rstb(IF_rst), .clkb(CBCLK), .sigb(SPI_Alex_data));
 cdc_sync #(48) SPI_Alex (.siga(runsafe_Alex_data), .rstb(SPI_Alex_rst), .clkb(CBCLK), .sigb(SPI_Alex_data));
  
-
- 
-
 //------------------------------------------------------------
 //  			High Priority to PC C&C Encoder 
 //------------------------------------------------------------
@@ -2479,8 +2507,6 @@ CC_encoder CC_encoder_inst (	// 200mS update rate unless Tx or overflows, then 1
 					.pk_detect_reset(pk_detect_reset)	// to Orion_ADC
 				);
 							
- 
- 
  
 //------------------------------------------------------------
 //  Orion on-board attenuators 
@@ -2584,7 +2610,7 @@ assign i_clk = HB_counter[23];
 
 reg	[4:0]	led_posn;
 	always @(posedge i_clk)
-		led_posn <= (led_posn == LED_MAX_POSN) ? 5'h0 : led_posn + 1'b1; // Yurij eu2av
+		led_posn <= (led_posn == LED_MAX_POSN) ? 5'h0 : led_posn + 1'b1; // Yurij-eu2av
 
 always @(posedge i_clk)
 	begin
@@ -2607,7 +2633,7 @@ always @(posedge i_clk)
 		DEBUG_LED17 <= ~(led_posn == 5'h10);
 		DEBUG_LED18 <= ~(led_posn == 5'h11);
 		DEBUG_LED19 <= ~(led_posn == 5'h12);
-		DEBUG_LED20 <= ~(led_posn == LED_MAX_POSN); // Yurij eu2av
+		DEBUG_LED20 <= ~(led_posn == LED_MAX_POSN); // Yurij-eu2av
 	end
 
 `else
@@ -2628,10 +2654,10 @@ always @(posedge i_clk)
 // flash LED4 for ~0.2 seconds whenever traffic to the boards MAC address is received 
 //Led_flash Flash_LED4(.clock(CMCLK), .signal(network_status[0]), .LED(DEBUG_LED4), .period(half_second));
 //Led_flash Flash_LED4(.clock(rx_clock), .signal(G_CC_seq_err), .LED(DEBUG_LED4), .period(fast_clock_half_second));
-// Refactored by Yurij eu2av: registered debug LED indicators (DEBUG_LED3..6)
+// Refactored by Yurij-eu2av: registered debug LED indicators (DEBUG_LED3..6)
 reg debug_led3_reg;
 reg debug_led4_reg;
-// PC connection watchdog (~2s timeout @ 125MHz) // Yurij eu2av
+// PC connection watchdog (~2s timeout @ 125MHz) // Yurij-eu2av
 reg pc_link_alive;
 reg [27:0] pc_link_counter;
 
@@ -2648,7 +2674,7 @@ end
 
 always @(posedge tx_clock) begin
     debug_led3_reg <= fifo_ready[0];  // Rx0 FIFO ready
-    debug_led4_reg <= pc_link_alive;  // Yurij eu2av: PC connection status (was FPGA_PTT)
+    debug_led4_reg <= pc_link_alive;  // Yurij-eu2av: PC connection status (was FPGA_PTT)
 end
 
 // CBCLK activity blinker (~3Hz @ 3.072MHz)
@@ -2673,10 +2699,10 @@ assign DEBUG_LED10 = 1'b1;
 assign DEBUG_LED9 = 1'b1;
 assign DEBUG_LED8 = 1'b1;
 assign DEBUG_LED7 = 1'b1;
-assign DEBUG_LED6 = ~debug_led6_reg; // Yurij eu2av: CBCLK activity blink
-assign DEBUG_LED5 = 1'b1; // Yurij eu2av: sequence error LED logic removed (sum transferred via cdc_mcp); LED available for future use
-assign DEBUG_LED4 = ~debug_led4_reg; // Yurij eu2av: registered FPGA_PTT
-assign DEBUG_LED3 = ~debug_led3_reg; // Yurij eu2av: registered fifo_ready[0]
+assign DEBUG_LED6 = ~debug_led6_reg; // Yurij-eu2av: CBCLK activity blink
+assign DEBUG_LED5 = 1'b1; // Yurij-eu2av: sequence error LED logic removed (sum transferred via cdc_mcp); LED available for future use
+assign DEBUG_LED4 = ~debug_led4_reg; // Yurij-eu2av: registered FPGA_PTT
+assign DEBUG_LED3 = ~debug_led3_reg; // Yurij-eu2av: registered fifo_ready[0]
 assign DEBUG_LED2 = 1'b1;
 assign DEBUG_LED1 = 1'b1;
 
