@@ -1,0 +1,32 @@
+## Modify phy timings and build multiple firmware images
+## Quartus tools quartus_sh and quartus_cpf must be in your path
+## The sed should work for both 9021 & 9031 in phy_cfg.v
+#	@sed -i "/\[6] <= 16'h..../s//\[6] <= 16'h$(RXTX1)/g" Ethernet/phy_cfg.v
+
+BOARD := Orion
+SEED1 := 1
+SEED2 := 2
+SEED3 := 3
+SEED4 := 4
+
+all:
+	rm -rf RBFS/*
+	mkdir -p RBFS/$(SEED1) RBFS/$(SEED2) RBFS/$(SEED3) RBFS/$(SEED4)
+	@sed -i "s/SEED\ ./SEED\ 1/" $(BOARD).qsf
+	quartus_sh --flow compile $(BOARD)
+	cp $(BOARD).rbf RBFS/$(SEED1)/$(BOARD)_$(SEED1).rbf
+	cp $(BOARD).*of $(BOARD).*.rpt RBFS/$(SEED1)/
+	@sed -i "s/SEED\ ./SEED\ 2/" $(BOARD).qsf
+	quartus_sh --flow compile $(BOARD)
+	cp $(BOARD).rbf RBFS/$(SEED2)/$(BOARD)_$(SEED2).rbf
+	cp $(BOARD).*of $(BOARD).*.rpt RBFS/$(SEED2)/
+	@sed -i "s/SEED\ ./SEED\ 3/" $(BOARD).qsf
+	quartus_sh --flow compile $(BOARD)
+	cp $(BOARD).rbf RBFS/$(SEED3)/$(BOARD)_$(SEED3).rbf
+	cp $(BOARD).*of $(BOARD).*.rpt RBFS/$(SEED3)/
+	@sed -i "s/SEED\ ./SEED\ 4/" $(BOARD).qsf
+	quartus_sh --flow compile $(BOARD)
+	cp $(BOARD).rbf RBFS/$(SEED4)/$(BOARD)_$(SEED4).rbf
+	cp $(BOARD).*of $(BOARD).*.rpt RBFS/$(SEED4)/
+
+.PHONY: all

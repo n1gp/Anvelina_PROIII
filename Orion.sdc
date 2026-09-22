@@ -18,16 +18,17 @@ create_clock -name {PHY_CLK125} -period 8.000 -waveform { 0.000 4.000 } [get_por
 create_clock -name {PHY_RX_CLOCK} -period 8.000 -waveform { 2.000 6.000 } [get_ports {PHY_RX_CLOCK}]
 create_clock -name {CLOCK_25MHZ} -period 40.000 -waveform { 0.000 20.000 } [get_ports {CLOCK_25MHZ}]
 
-set_clock_groups -exclusive -group {CLOCK_25MHZ}
-#set_clock_groups -exclusive -group {PHY_CLK125}
-set_clock_groups -exclusive -group {PHY_RX_CLOCK}
-
 #virtual base clocks on required inputs
 create_clock -name {virt_PHY_RX_CLOCK} -period 8.000 -waveform { 0.000 4.000 } 
 create_clock -name {virt_122MHz} -period 8.138 -waveform { 0.000 4.069 } 
 create_clock -name {virt_CBCLK} -period 325.520 -waveform { 0.000 162.760 } 
 
+set_clock_groups -asynchronous -group [get_clocks {PHY_CLK125}] -group [get_clocks {LTC2208_122MHz}]
+
 set_clock_groups -exclusive -group {virt_PHY_RX_CLOCK}
+set_clock_groups -exclusive -group {CLOCK_25MHZ}
+#set_clock_groups -exclusive -group {PHY_CLK125}
+set_clock_groups -exclusive -group {PHY_RX_CLOCK}
 
 derive_pll_clocks
 derive_clock_uncertainty
@@ -213,7 +214,7 @@ set_max_delay -from tx_clock -to tx_clock 21
 #set_max_delay -from network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] -to PHY_TX_CLOCK 9
 #set_max_delay -from tx_clock -to PHY_TX_CLOCK 9
 # Yurij eu2av - 2026-06-09: Removed max_delay workaround after adding pipeline register for C&C path
-#set_max_delay -from PHY_RX_CLOCK -to PHY_RX_CLOCK 10
+set_max_delay -from PHY_RX_CLOCK -to PHY_RX_CLOCK 9
 #set_max_delay -from tx_clock -to network_inst|tx_pll_inst|altpll_component|auto_generated|pll1|clk[0] 20
 set_max_delay -from PLL_IF_inst|altpll_component|auto_generated|pll1|clk[0] -to _122MHz 8
 # Yurij eu2av - 2026-06-09: Relaxed max_delay from 4ns to 8ns (CMCLK -> _122_90 cross-clock)

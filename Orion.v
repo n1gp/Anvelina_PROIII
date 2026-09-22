@@ -727,6 +727,9 @@
 			    monotonicity checking resumes. Original root cause: the 2026-06-09
 			    expected_sequence_number pipeline register lagged the comparison by one
 			    packet and counted every good packet as an error.
+
+2026	Sep 20 - (N1GP) Added a 3 stage CDC multi-clock transfer per AI recommendations to improve
+                        clock separation and per build robustness (cdc_mcp_3stage).
 */
 
 module Orion(
@@ -963,7 +966,7 @@ parameter IF_TPD  = 2;
 
 localparam board_type = 8'h05;		  	// 00 for Metis, 01 for Hermes, 02 for Griffin, 03 for Angelia, and 05 for Orion
 parameter  Orion_version = 8'd22;			// FPGA code version
-parameter  beta_version = 8'd14;	// Should be 0 for official release
+parameter  beta_version = 8'd15;	// Should be 0 for official release
 parameter  protocol_version = 8'd44;	// openHPSDR protocol version implemented
 
 //--------------------------------------------------------------
@@ -1133,8 +1136,8 @@ wire discovery_ACK_sync;
 sdr_receive sdr_receive_inst(
 	//inputs 
 	.rx_clock(rx_clock),
-	.udp_rx_data(udp_rx_data),
-	.udp_rx_active(udp_rx_active),
+	.udp_rx_data(udp_rx_data_pipe),
+	.udp_rx_active(udp_rx_active_pipe),
 	.sending_sync(sending_sync),
 	.broadcast(broadcast),
 	.erase_ACK(busy),						// set when erase is in progress
@@ -1717,7 +1720,7 @@ wire [10:0] EPCS_wrused;
 
 
 EPCS_fifo EPCS_fifo_inst(.wrclk (rx_clock),.rdreq (EPCS_rdreq),.rdclk (clock_12_5MHz),.wrreq(EPCS_FIFO_enable),  
-                .data (udp_rx_data),.q (EPCS_data), .rdusedw(EPCS_Rx_used), .aclr(IF_rst), .wrusedw(EPCS_wrused));
+                .data (udp_rx_data_pipe),.q (EPCS_data), .rdusedw(EPCS_Rx_used), .aclr(IF_rst), .wrusedw(EPCS_wrused));
 
 //----------------------------
 // 			ASMI Interface
@@ -1924,12 +1927,12 @@ genvar c;
    begin: MDC
 	
 	// Move RxADC[n] to C122 clock domain
-	cdc_mcp #(16) ADC_select
+	cdc_mcp_3stage #(16) ADC_select
 	(.a_rst(C122_rst), .a_clk(rx_clock), .a_data(RxADC[c]), .a_data_rdy(Rx_data_ready), .b_rst(C122_rst), .b_clk(C122_clk), .b_data(C122_RxADC[c]));
 
 
 	// Move Rx[n] sample rate to C122 clock domain
-	cdc_mcp #(16) S_rate
+	cdc_mcp_3stage #(16) S_rate
 	(.a_rst(C122_rst), .a_clk(rx_clock), .a_data(RxSampleRate[c]), .a_data_rdy(Rx_data_ready), .b_rst(C122_rst), .b_clk(C122_clk), .b_data(C122_SampleRate[c]));
 
 	// move Rx phase words to C122 clock domain
@@ -1986,7 +1989,7 @@ endgenerate
 
 // only using Rx0 and Rx1 Sync for now so can use simpler code
 	// Move SyncRx[n] into C122 clock domain
-	cdc_mcp #(8) SyncRx_inst
+	cdc_mcp_3stage #(8) SyncRx_inst
 	(.a_rst(C122_rst), .a_clk(rx_clock), .a_data(SyncRx[0]), .a_data_rdy(Rx_data_ready), .b_rst(C122_rst), .b_clk(C122_clk), .b_data(C122_SyncRx[0]));
 	
 	
@@ -2414,12 +2417,12 @@ assign  DITH   = dither[0];      		//high turns LTC2208 dither on
 assign  DITH_2 = dither[1]; 		
 
 // transfer C&C data in rx_clock domain, on strobe, into relevant clock domains
-cdc_mcp #(32) Tx1_freq 
+cdc_mcp_3stage #(32) Tx1_freq 
  (.a_rst(C122_rst), .a_clk(rx_clock), .a_data(Tx0_frequency), .a_data_rdy(Alex_data_ready), .b_rst(C122_rst), .b_clk(C122_clk), .b_data(C122_frequency_HZ_Tx));
  
 // move Mux data into C122_clk domain
 wire [7:0]C122_Mux;
-cdc_mcp #(8) Mux_inst 
+cdc_mcp_3stage #(8) Mux_inst 
 	(.a_rst(C122_rst), .a_clk(rx_clock), .a_data(Mux), .a_data_rdy(Rx_data_ready), .b_rst(C122_rst), .b_clk(C122_clk), .b_data(C122_Mux)); 
 
 // move Alex data into CBCLK domain
@@ -2462,7 +2465,7 @@ end
 
 wire seq_err_sample_tick = (seq_err_sample_cnt == 10'd0);
 
-cdc_mcp #(32) cdc_seq_err (
+cdc_mcp_3stage #(32) cdc_seq_err (
 	.a_rst(1'b0),
 	.a_clk(rx_clock),
 	.a_data(ALL_sequence_errors_reg),
