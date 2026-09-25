@@ -148,7 +148,7 @@ always @(posedge tx_clock)
 				udp_tx_request <= 1'b0;
 				send_response <= 1'b0;
 				byte_no <= 16'd0; 
-				sdr_send_port <= 16'd0;										// set base to 1024
+				sdr_send_port <= 16'd1024; // set base to 1024
 				sp_fifo_rdreq <= 1'b0;
 				mic_fifo_rdreq <= 1'b0;
 				udp_tx_length <= 16'd0;

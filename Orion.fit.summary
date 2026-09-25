@@ -1,14 +1,14 @@
-Fitter Status : Successful - Sun Sep 20 06:15:16 2026
+Fitter Status : Successful - Fri Sep 25 12:28:21 2026
 Quartus Prime Version : 25.1std.0 Build 1129 10/21/2025 SC Lite Edition
 Revision Name : Orion
 Top-level Entity Name : Orion
 Family : Cyclone IV E
 Device : EP4CE115F29I7
 Timing Models : Final
-Total logic elements : 97,648 / 114,480 ( 85 % )
-    Total combinational functions : 76,931 / 114,480 ( 67 % )
-    Dedicated logic registers : 76,034 / 114,480 ( 66 % )
-Total registers : 76044
+Total logic elements : 97,553 / 114,480 ( 85 % )
+    Total combinational functions : 76,909 / 114,480 ( 67 % )
+    Dedicated logic registers : 76,028 / 114,480 ( 66 % )
+Total registers : 76038
 Total pins : 179 / 529 ( 34 % )
 Total virtual pins : 0
 Total memory bits : 1,229,728 / 3,981,312 ( 31 % )
